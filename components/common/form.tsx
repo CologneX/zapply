@@ -37,8 +37,8 @@ export function AppFormField({
           {label}
         </FormLabel>
       )}
-      <FormControl>{children}</FormControl>
       {description && <FormDescription>{description}</FormDescription>}
+      <FormControl>{children}</FormControl>
       <FormMessage />
     </FormItem>
   );
@@ -56,7 +56,7 @@ export function AppForm<T>({
 }> &
   React.FormHTMLAttributes<HTMLFormElement>) {
   return (
-    <form {...props} className={cn("space-y-4", props.className)}>
+    <form {...props} className={cn(props.className)}>
       <Form {...form}>{children}</Form>
       {error && (
         <Alert variant="destructive" className="border-destructive bg-red-100">

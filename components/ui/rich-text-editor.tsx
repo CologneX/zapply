@@ -151,6 +151,10 @@ export default function RichTextEditor({
           keepMarks: true,
           keepAttributes: false,
         },
+        link: {
+          openOnClick: true,
+          enableClickSelection: true,
+        },
       }),
     ],
     content,
@@ -292,6 +296,7 @@ export default function RichTextEditor({
 
         <Button
           variant="ghost"
+          type="button"
           size="sm"
           onClick={() => editor.chain().focus().setHorizontalRule().run()}
         >
@@ -302,6 +307,7 @@ export default function RichTextEditor({
 
         <Button
           variant="ghost"
+          type="button"
           size="sm"
           onClick={() => editor.chain().focus().undo().run()}
           disabled={!editor.can().chain().focus().undo().run()}
@@ -312,6 +318,7 @@ export default function RichTextEditor({
         <Button
           variant="ghost"
           size="sm"
+          type="button"
           onClick={() => editor.chain().focus().redo().run()}
           disabled={!editor.can().chain().focus().redo().run()}
         >

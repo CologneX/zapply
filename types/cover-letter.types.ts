@@ -8,7 +8,7 @@ export const CoverLetterSchema = z.object({
     // Job context
     jobTitle: z.string(),
     companyName: z.string(),
-    jobDescription: z.string().optional(),
+    jobDescription: z.string(),
 
     // User customization
     additionalInfo: z.string().optional(),
@@ -20,8 +20,9 @@ export const CoverLetterSchema = z.object({
 export const CreateCoverLetterSchema = z.object({
     jobTitle: z.string().min(1, "Job title is required"),
     companyName: z.string().min(1, "Company name is required"),
-    jobDescription: z.string().optional(),
+    jobDescription: z.string(),
     additionalInfo: z.string().optional(),
+    content: z.string(),
 });
 
 export type CoverLetterType = z.infer<typeof CoverLetterSchema>;
