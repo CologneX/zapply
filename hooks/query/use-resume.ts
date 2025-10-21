@@ -1,27 +1,76 @@
 "use client";
 
 import { useMutation } from "@tanstack/react-query";
-import { CreateResumeType } from "@/types/resume.types";
-import { ResumeSuggestionsStructuredType } from "@/types/helper.types";
-import { ProfileType } from "@/types/profile.types";
+import { ClientCreateResumeType, GeneratedResumeSuggestionType, ResumeSuggestionsStructuredSchema, ResumeSuggestionsStructuredType } from "@/types/resume.types";
+import { toast } from "sonner";
+import { ActionErrorWrapper, transformProfileDates } from "@/lib/utils";
+import { CreateResumeAction } from "@/services/resume.service";
 
-export const useResumeGeneration = () => {
-    return useMutation({
-        mutationFn: async (data: CreateResumeType): Promise<ResumeSuggestionsStructuredType & {
-            profile: ProfileType
-        }> => {
+export const useResumeQuery = () => {
+    // const query = useQuery({
+    //     queryKey: resumeKeys.list('all'),
+    //     queryFn: async () => {
+    //         const req = await fetch('/api/resumes')
+    //         if (!req.ok) {
+    //             throw new Error('Failed to fetch cover letters')
+    //         }
+    //         return req.json()
+    //     }
+    // })
+    const CreateResume = useMutation({
+        mutationFn: async (data: ClientCreateResumeType) => {
+            toast.promise(
+                ActionErrorWrapper(CreateResumeAction(data)), {
+                loading: 'Creating resume...',
+                success: 'Resume created successfully!',
+                error: 'Failed to create resume.'
+            }
+            )
+        },
+    })
+
+    // const DeleteCoverLetter = useMutation({
+    //     mutationFn: async (id: string) => {
+    //         toast.promise(
+    //             ActionErrorWrapper(DeleteCoverLetterAction(id)), {
+    //             loading: 'Deleting cover letter...',
+    //             success: 'Cover letter deleted successfully!',
+    //             error: 'Failed to delete cover letter.'
+    //         }
+    //         )
+    //     }, onSuccess: () => {
+    //         query.refetch()
+    //     }
+    // })
+
+    const GenerateResume = useMutation({
+        mutationFn: async (data: GeneratedResumeSuggestionType): Promise<ResumeSuggestionsStructuredType> => {
             const response = await fetch("/api/v1/resume/generate", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(data),
             });
-
+            const resJson = await response.json();
             if (!response.ok) {
-                const error = await response.json();
-                throw new Error(error.error || "Failed to generate resume");
+                throw new Error(resJson.error || "Failed to generate resume suggestions");
             }
 
-            return response.json();
+            console.log("Resume generation response:", resJson);
+            const transformed = transformProfileDates(resJson.profile);
+            const generated = ResumeSuggestionsStructuredSchema.safeParse({
+                ...resJson,
+                profile: transformed,
+            });
+            if (!generated.success) {
+                console.error("Resume generation response validation error:", generated.error);
+                throw new Error("Invalid response format from server");
+            }
+            return generated.data;
         },
-    });
+    })
+    return {
+        // ...query,
+        CreateResume,
+        GenerateResume,
+    }
 };

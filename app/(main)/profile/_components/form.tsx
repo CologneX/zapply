@@ -6,6 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import DOMPurify from "isomorphic-dompurify";
 import { useProfileQuery } from "@/hooks/query/use-profile";
 import {
   ClientCreateProfileType,
@@ -16,11 +17,13 @@ import {
   ClientCreatePublicationType,
   ClientCreateLanguageType,
   ClientCreateSocialType,
+  ClientCreateProjectType,
+  ProfileToClientCreateProfileSchema,
 } from "@/types/profile.types";
 import React, { useState } from "react";
 import { useForm, useFieldArray, UseFormReturn } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { format } from "date-fns";
+import { formatMonth } from "@/lib/utils";
 import {
   PenIcon,
   CheckIcon,
@@ -37,9 +40,9 @@ import {
   PlusIcon,
   TrashIcon,
   PenOffIcon,
+  CodeIcon,
 } from "lucide-react";
 import { FormField } from "@/components/ui/form";
-import { DatePicker } from "@/components/ui/date-picker";
 import {
   Select,
   SelectTrigger,
@@ -52,6 +55,8 @@ import { Label } from "@/components/ui/label";
 import { ClientCreateEducationType } from "@/types/profile.types";
 import { closeDialog, openDialog } from "@/components/common/dialog";
 import { motion, AnimatePresence } from "motion/react";
+import RichTextEditor from "@/components/ui/rich-text-editor";
+import { MonthPicker } from "@/components/ui/month-picker";
 
 function HeaderSection({
   form,
@@ -290,7 +295,7 @@ function WorkExperienceSection({
         <div className="space-y-6">
           {workFields?.length ? (
             <AnimatePresence>
-              {workFields.map((exp: any, index: number) => (
+              {workFields.map((exp, index: number) => (
                 <motion.div
                   key={exp.id}
                   initial={{ opacity: 0, y: -10 }}
@@ -315,6 +320,23 @@ function WorkExperienceSection({
                             )}{" "}
                             • {form.getValues(`workExperiences.${index}.type`)}
                           </p>
+                          <p className="text-xs text-muted-foreground mt-1">
+                            {formatMonth(
+                              form.getValues(
+                                `workExperiences.${index}.startDate`
+                              )
+                            )}{" "}
+                            -{" "}
+                            {form.getValues(
+                              `workExperiences.${index}.isCurrent`
+                            )
+                              ? "Present"
+                              : formatMonth(
+                                  form.getValues(
+                                    `workExperiences.${index}.endDate`
+                                  )
+                                )}
+                          </p>
                         </div>
                         <div className="flex gap-1">
                           {FieldButtons(`workExperiences.${index}`)}
@@ -324,11 +346,21 @@ function WorkExperienceSection({
                       {form.getValues(
                         `workExperiences.${index}.description`
                       ) && (
-                        <p className="text-sm text-muted-foreground">
-                          {form.getValues(
-                            `workExperiences.${index}.description`
-                          )}
-                        </p>
+                        // <p className="text-sm text-muted-foreground">
+                        //   {form.getValues(
+                        //     `workExperiences.${index}.description`
+                        //   )}
+                        // </p>
+                        <div
+                          className="prose prose-sm max-w-none text-muted-foreground"
+                          dangerouslySetInnerHTML={{
+                            __html: DOMPurify.sanitize(
+                              form.getValues(
+                                `workExperiences.${index}.description`
+                              )
+                            ),
+                          }}
+                        />
                       )}
                     </>
                   ) : (
@@ -420,10 +452,9 @@ function WorkExperienceSection({
                           control={form.control}
                           render={({ field }) => (
                             <AppFormField>
-                              <DatePicker
-                                value={field.value}
-                                onChange={field.onChange}
-                                placeholder="Start Date"
+                              <MonthPicker
+                                selectedMonth={field.value}
+                                onMonthSelect={field.onChange}
                               />
                             </AppFormField>
                           )}
@@ -433,10 +464,12 @@ function WorkExperienceSection({
                           control={form.control}
                           render={({ field }) => (
                             <AppFormField>
-                              <DatePicker
-                                value={field.value}
-                                onChange={field.onChange}
-                                placeholder="End Date (Optional)"
+                              <MonthPicker
+                                disabled={form.watch(
+                                  `workExperiences.${index}.isCurrent`
+                                )}
+                                selectedMonth={field.value}
+                                onMonthSelect={field.onChange}
                               />
                             </AppFormField>
                           )}
@@ -449,7 +482,15 @@ function WorkExperienceSection({
                               <div className="flex items-center gap-3">
                                 <Switch
                                   checked={field.value ?? false}
-                                  onCheckedChange={field.onChange}
+                                  onCheckedChange={(value) => {
+                                    field.onChange(value);
+                                    if (value) {
+                                      form.setValue(
+                                        `workExperiences.${index}.endDate`,
+                                        undefined
+                                      );
+                                    }
+                                  }}
                                 />
                                 <Label>Currently working here</Label>
                               </div>
@@ -461,10 +502,9 @@ function WorkExperienceSection({
                           control={form.control}
                           render={({ field }) => (
                             <AppFormField>
-                              <Textarea
-                                placeholder="Description"
-                                {...field}
-                                rows={3}
+                              <RichTextEditor
+                                content={field.value}
+                                onChange={field.onChange}
                               />
                             </AppFormField>
                           )}
@@ -477,8 +517,8 @@ function WorkExperienceSection({
             </AnimatePresence>
           ) : (
             <p className="text-sm text-muted-foreground text-center py-8">
-              No work experience added yet. Click "Add Experience" to get
-              started.
+              No work experience added yet. Click &quot;Add Experience&quot; to
+              get started.
             </p>
           )}
         </div>
@@ -541,7 +581,7 @@ function EducationSection({
         <div className="space-y-6">
           {educationFields?.length ? (
             <AnimatePresence>
-              {educationFields.map((edu: any, index: number) => (
+              {educationFields.map((edu, index: number) => (
                 <motion.div
                   key={edu.id}
                   initial={{ opacity: 0, y: -10 }}
@@ -564,6 +604,17 @@ function EducationSection({
                             {form.getValues(`educations.${index}.location`)}
                           </p>
                         )}
+                        <p className="text-xs text-muted-foreground mt-1">
+                          {formatMonth(
+                            form.getValues(`educations.${index}.startDate`)
+                          )}{" "}
+                          -{" "}
+                          {form.getValues(`educations.${index}.isCurrent`)
+                            ? "Present"
+                            : formatMonth(
+                                form.getValues(`educations.${index}.endDate`)
+                              )}
+                        </p>
                       </div>
                       <div className="flex gap-1">
                         {FieldButtons(`educations.${index}`)}
@@ -631,10 +682,9 @@ function EducationSection({
                           control={form.control}
                           render={({ field }) => (
                             <AppFormField>
-                              <DatePicker
-                                value={field.value}
-                                onChange={field.onChange}
-                                placeholder="Start Date"
+                              <MonthPicker
+                                selectedMonth={field.value}
+                                onMonthSelect={field.onChange}
                               />
                             </AppFormField>
                           )}
@@ -644,10 +694,12 @@ function EducationSection({
                           control={form.control}
                           render={({ field }) => (
                             <AppFormField>
-                              <DatePicker
-                                value={field.value}
-                                onChange={field.onChange}
-                                placeholder="End Date (Optional)"
+                              <MonthPicker
+                                disabled={form.watch(
+                                  `educations.${index}.isCurrent`
+                                )}
+                                selectedMonth={field.value}
+                                onMonthSelect={field.onChange}
                               />
                             </AppFormField>
                           )}
@@ -675,7 +727,8 @@ function EducationSection({
             </AnimatePresence>
           ) : (
             <p className="text-sm text-muted-foreground text-center py-8">
-              No education added yet. Click "Add Education" to get started.
+              No education added yet. Click &quot;Add Education&quot; to get
+              started.
             </p>
           )}
         </div>
@@ -723,7 +776,7 @@ function CertificationsSection({
             variant="outline"
             size="sm"
             onClick={() => {
-              appendCertification(getNewCertification() as any);
+              appendCertification(getNewCertification());
               setFieldMode(
                 `certifications.${certificationFields.length}`,
                 "create"
@@ -738,7 +791,7 @@ function CertificationsSection({
         <div className="space-y-4">
           {certificationFields?.length ? (
             <AnimatePresence>
-              {certificationFields.map((cert: any, index: number) => (
+              {certificationFields.map((cert, index: number) => (
                 <motion.div
                   key={cert.id}
                   initial={{ opacity: 0, y: -10 }}
@@ -766,6 +819,15 @@ function CertificationsSection({
                             )}
                           </p>
                         )}
+                        <p className="text-xs text-muted-foreground mt-1">
+                          {formatMonth(
+                            form.getValues(`certifications.${index}.startDate`)
+                          )}
+                          {form.getValues(`certifications.${index}.endDate`) &&
+                            ` - ${formatMonth(
+                              form.getValues(`certifications.${index}.endDate`)
+                            )}`}
+                        </p>
                       </div>
                       <div className="flex gap-1">
                         {FieldButtons(`certifications.${index}`)}
@@ -821,10 +883,9 @@ function CertificationsSection({
                           control={form.control}
                           render={({ field }) => (
                             <AppFormField>
-                              <DatePicker
-                                value={field.value}
-                                onChange={field.onChange}
-                                placeholder="Issue Date"
+                              <MonthPicker
+                                selectedMonth={field.value}
+                                onMonthSelect={field.onChange}
                               />
                             </AppFormField>
                           )}
@@ -834,10 +895,9 @@ function CertificationsSection({
                           control={form.control}
                           render={({ field }) => (
                             <AppFormField>
-                              <DatePicker
-                                value={field.value}
-                                onChange={field.onChange}
-                                placeholder="Expiration Date (Optional)"
+                              <MonthPicker
+                                selectedMonth={field.value}
+                                onMonthSelect={field.onChange}
                               />
                             </AppFormField>
                           )}
@@ -918,7 +978,7 @@ function AwardsSection({
             variant="outline"
             size="sm"
             onClick={() => {
-              appendAward(getNewAward() as any);
+              appendAward(getNewAward());
               setFieldMode(`awardOrHonors.${awardsFields.length}`, "create");
             }}
           >
@@ -930,7 +990,7 @@ function AwardsSection({
         <div className="space-y-4">
           {awardsFields?.length ? (
             <AnimatePresence>
-              {awardsFields.map((award: any, index: number) => (
+              {awardsFields.map((award, index: number) => (
                 <motion.div
                   key={award.id}
                   initial={{ opacity: 0, y: -10 }}
@@ -950,11 +1010,8 @@ function AwardsSection({
                         </p>
                         {form.getValues(`awardOrHonors.${index}.date`) && (
                           <p className="text-xs text-muted-foreground mt-1">
-                            {format(
-                              form.getValues(
-                                `awardOrHonors.${index}.date`
-                              ) as unknown as Date,
-                              "PPP"
+                            {formatMonth(
+                              form.getValues(`awardOrHonors.${index}.date`)
                             )}
                           </p>
                         )}
@@ -1033,10 +1090,9 @@ function AwardsSection({
                           control={form.control}
                           render={({ field }) => (
                             <AppFormField>
-                              <DatePicker
-                                value={field.value}
-                                onChange={field.onChange}
-                                placeholder="Award Date"
+                              <MonthPicker
+                                selectedMonth={field.value}
+                                onMonthSelect={field.onChange}
                               />
                             </AppFormField>
                           )}
@@ -1108,7 +1164,7 @@ function PublicationsSection({
             variant="outline"
             size="sm"
             onClick={() => {
-              appendPublication(getNewPublication() as any);
+              appendPublication(getNewPublication());
               setFieldMode(
                 `publications.${publicationFields.length}`,
                 "create"
@@ -1123,7 +1179,7 @@ function PublicationsSection({
         <div className="space-y-4">
           {publicationFields?.length ? (
             <AnimatePresence>
-              {publicationFields.map((pub: any, index: number) => (
+              {publicationFields.map((pub, index: number) => (
                 <motion.div
                   key={pub.id}
                   initial={{ opacity: 0, y: -10 }}
@@ -1134,21 +1190,14 @@ function PublicationsSection({
                 >
                   {!isEditing(`publications.${index}`) ? (
                     <div className="flex items-start justify-between">
-                      <div className="flex gap-1">
-                        {FieldButtons(`publications.${index}`)}
-                        {RemoveFieldButton(() => removePublication(index))}
-                      </div>
                       <div className="pl-2">
                         <p className="font-medium text-sm">
                           {form.getValues(`publications.${index}.title`)}
                         </p>
                         {form.getValues(`publications.${index}.date`) && (
                           <p className="text-xs text-muted-foreground">
-                            {format(
-                              form.getValues(
-                                `publications.${index}.date`
-                              ) as unknown as Date,
-                              "PPP"
+                            {formatMonth(
+                              form.getValues(`publications.${index}.date`)
                             )}
                           </p>
                         )}
@@ -1162,6 +1211,10 @@ function PublicationsSection({
                             {form.getValues(`publications.${index}.url`)}
                           </a>
                         )}
+                      </div>
+                      <div className="flex gap-1">
+                        {FieldButtons(`publications.${index}`)}
+                        {RemoveFieldButton(() => removePublication(index))}
                       </div>
                     </div>
                   ) : (
@@ -1201,10 +1254,9 @@ function PublicationsSection({
                           control={form.control}
                           render={({ field }) => (
                             <AppFormField>
-                              <DatePicker
-                                value={field.value}
-                                onChange={field.onChange}
-                                placeholder="Publication Date"
+                              <MonthPicker
+                                selectedMonth={field.value}
+                                onMonthSelect={field.onChange}
                               />
                             </AppFormField>
                           )}
@@ -1272,7 +1324,7 @@ function LanguagesSection({
             variant="outline"
             size="sm"
             onClick={() => {
-              appendLanguage(getNewLanguage() as any);
+              appendLanguage(getNewLanguage());
               setFieldMode(`languages.${languageFields.length}`, "create");
             }}
           >
@@ -1284,7 +1336,7 @@ function LanguagesSection({
         <div className="space-y-4">
           {languageFields?.length ? (
             <AnimatePresence>
-              {languageFields.map((lang: any, index: number) => (
+              {languageFields.map((lang, index: number) => (
                 <motion.div
                   key={lang.id}
                   initial={{ opacity: 0, y: -10 }}
@@ -1405,6 +1457,311 @@ function LanguagesSection({
   );
 }
 
+function ProjectsSection({
+  form,
+  isEditing,
+  setFieldMode,
+  handleCancel,
+  FieldButtons,
+  RemoveFieldButton,
+}: {
+  form: UseFormReturn<ClientCreateProfileType>;
+  isEditing: (s: string) => boolean;
+  setFieldMode: (fieldName: string, mode: "create" | "edit") => void;
+  handleCancel: (removeCallback?: () => void) => void;
+  FieldButtons: (s: string, removeCallback?: () => void) => React.ReactNode;
+  RemoveFieldButton: (fn: () => void) => React.ReactNode;
+}) {
+  const {
+    fields: projectFields,
+    append: appendProject,
+    remove: removeProject,
+  } = useFieldArray({ control: form.control, name: "projects" });
+  const getNewProject = (): ClientCreateProjectType => ({
+    name: "",
+    description: "",
+    shortDescription: "",
+    technologies: [],
+    role: [],
+    repositoryUrl: "",
+    liveUrl: "",
+    startedAt: new Date(),
+  });
+
+  return (
+    <Card>
+      <CardHeader>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <CodeIcon className="size-5" />
+            <CardTitle>Projects</CardTitle>
+          </div>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => {
+              appendProject(getNewProject());
+              setFieldMode(`projects.${projectFields.length}`, "create");
+            }}
+          >
+            <PlusIcon /> Add Project
+          </Button>
+        </div>
+      </CardHeader>
+      <CardContent>
+        <div className="space-y-6">
+          {projectFields?.length ? (
+            <AnimatePresence>
+              {projectFields.map((project, index: number) => (
+                <motion.div
+                  key={project.id}
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.3 }}
+                  className="border-l-2 border-primary pl-4 space-y-2"
+                >
+                  {!isEditing(`projects.${index}`) ? (
+                    <>
+                      <div className="flex items-start justify-between">
+                        <div>
+                          <h4 className="font-semibold">
+                            {form.getValues(`projects.${index}.name`)}
+                          </h4>
+                          <p className="text-sm text-muted-foreground">
+                            {form.getValues(
+                              `projects.${index}.shortDescription`
+                            )}
+                          </p>
+                          {form.getValues(`projects.${index}.technologies`)
+                            ?.length ? (
+                            <div className="flex flex-wrap gap-1 mt-2">
+                              {form
+                                .getValues(`projects.${index}.technologies`)
+                                ?.map((tech) => (
+                                  <Badge
+                                    key={tech}
+                                    variant="secondary"
+                                    className="text-xs"
+                                  >
+                                    {tech}
+                                  </Badge>
+                                ))}
+                            </div>
+                          ) : null}
+                          {form.getValues(`projects.${index}.role`)?.length ? (
+                            <div className="flex flex-wrap gap-1 mt-1">
+                              {form
+                                .getValues(`projects.${index}.role`)
+                                ?.map((r) => (
+                                  <Badge
+                                    key={r}
+                                    variant="outline"
+                                    className="text-xs"
+                                  >
+                                    {r}
+                                  </Badge>
+                                ))}
+                            </div>
+                          ) : null}
+                          <p className="text-xs text-muted-foreground mt-2">
+                            {formatMonth(
+                              form.getValues(`projects.${index}.startedAt`)
+                            )}
+                          </p>
+                        </div>
+                        <div className="flex gap-1">
+                          {FieldButtons(`projects.${index}`)}
+                          {RemoveFieldButton(() => removeProject(index))}
+                        </div>
+                      </div>
+                      {form.getValues(`projects.${index}.description`) && (
+                        <div
+                          className="prose prose-sm max-w-none text-muted-foreground"
+                          dangerouslySetInnerHTML={{
+                            __html: DOMPurify.sanitize(
+                              form.getValues(`projects.${index}.description`) ||
+                                ""
+                            ),
+                          }}
+                        />
+                      )}
+                      <div className="flex gap-2">
+                        {form.getValues(`projects.${index}.repositoryUrl`) && (
+                          <a
+                            href={form.getValues(
+                              `projects.${index}.repositoryUrl`
+                            )}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-xs text-primary hover:underline"
+                          >
+                            Repository
+                          </a>
+                        )}
+                        {form.getValues(`projects.${index}.liveUrl`) && (
+                          <a
+                            href={form.getValues(`projects.${index}.liveUrl`)}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-xs text-primary hover:underline"
+                          >
+                            Live Demo
+                          </a>
+                        )}
+                      </div>
+                    </>
+                  ) : (
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between">
+                        <h4 className="font-semibold">Edit Project</h4>
+                        <div className="flex gap-1">
+                          <Button variant="ghost" size="sm">
+                            <CheckIcon className="h-3 w-3" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() =>
+                              handleCancel(() => removeProject(index))
+                            }
+                          >
+                            <PenOffIcon className="h-3 w-3" />
+                          </Button>
+                        </div>
+                      </div>
+                      <div className="grid gap-3">
+                        <FormField
+                          name={`projects.${index}.name`}
+                          control={form.control}
+                          render={({ field }) => (
+                            <AppFormField>
+                              <Input placeholder="Project Name" {...field} />
+                            </AppFormField>
+                          )}
+                        />
+                        <FormField
+                          name={`projects.${index}.shortDescription`}
+                          control={form.control}
+                          render={({ field }) => (
+                            <AppFormField>
+                              <Input
+                                placeholder="Short Description (1 line)"
+                                {...field}
+                              />
+                            </AppFormField>
+                          )}
+                        />
+                        <FormField
+                          name={`projects.${index}.description`}
+                          control={form.control}
+                          render={({ field }) => (
+                            <AppFormField>
+                              <RichTextEditor
+                                content={field.value}
+                                onChange={field.onChange}
+                              />
+                            </AppFormField>
+                          )}
+                        />
+                        <FormField
+                          name={`projects.${index}.technologies`}
+                          control={form.control}
+                          render={({
+                            field: { value, onChange, ...field },
+                          }) => (
+                            <AppFormField>
+                              <Input
+                                placeholder="Technologies (comma-separated)"
+                                defaultValue={value?.join(", ") || ""}
+                                onChange={(e) => {
+                                  const techs = e.target.value
+                                    .split(",")
+                                    .map((t) => t.trim())
+                                    .filter((t) => t.length > 0);
+                                  onChange(techs);
+                                }}
+                                {...field}
+                              />
+                            </AppFormField>
+                          )}
+                        />
+                        <FormField
+                          name={`projects.${index}.role`}
+                          control={form.control}
+                          render={({
+                            field: { value, onChange, ...field },
+                          }) => (
+                            <AppFormField>
+                              <Input
+                                placeholder="Roles (comma-separated)"
+                                defaultValue={value?.join(", ") || ""}
+                                onChange={(e) => {
+                                  const roles = e.target.value
+                                    .split(",")
+                                    .map((r) => r.trim())
+                                    .filter((r) => r.length > 0);
+                                  onChange(roles);
+                                }}
+                                {...field}
+                              />
+                            </AppFormField>
+                          )}
+                        />
+                        <FormField
+                          name={`projects.${index}.startedAt`}
+                          control={form.control}
+                          render={({ field }) => (
+                            <AppFormField>
+                              <MonthPicker
+                                selectedMonth={field.value}
+                                onMonthSelect={field.onChange}
+                              />
+                            </AppFormField>
+                          )}
+                        />
+                        <FormField
+                          name={`projects.${index}.repositoryUrl`}
+                          control={form.control}
+                          render={({ field }) => (
+                            <AppFormField>
+                              <Input
+                                placeholder="Repository URL (optional)"
+                                {...field}
+                              />
+                            </AppFormField>
+                          )}
+                        />
+                        <FormField
+                          name={`projects.${index}.liveUrl`}
+                          control={form.control}
+                          render={({ field }) => (
+                            <AppFormField>
+                              <Input
+                                placeholder="Live Demo URL (optional)"
+                                {...field}
+                              />
+                            </AppFormField>
+                          )}
+                        />
+                      </div>
+                    </div>
+                  )}
+                </motion.div>
+              ))}
+            </AnimatePresence>
+          ) : (
+            <p className="text-sm text-muted-foreground text-center py-8">
+              No projects added yet. Click &quot;Add Project&quot; to get
+              started.
+            </p>
+          )}
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
 function SocialsSection({
   form,
   isEditing,
@@ -1438,7 +1795,7 @@ function SocialsSection({
             variant="outline"
             size="sm"
             onClick={() => {
-              appendSocial(getNewSocial() as any);
+              appendSocial(getNewSocial());
               setFieldMode(`socials.${socialsFields.length}`, "create");
             }}
           >
@@ -1450,7 +1807,7 @@ function SocialsSection({
         <div className="space-y-2">
           {socialsFields?.length ? (
             <AnimatePresence>
-              {socialsFields.map((social: any, index: number) => (
+              {socialsFields.map((social, index: number) => (
                 <motion.div
                   key={social.id}
                   initial={{ opacity: 0, y: -10 }}
@@ -1543,9 +1900,14 @@ function SocialsSection({
 export default function ProfileForm() {
   const { data: profile, CreateProfile } = useProfileQuery();
 
+  // Transform and parse in one step
+  const defaultValues = profile
+    ? ProfileToClientCreateProfileSchema.parse(profile)
+    : undefined;
+
   const form = useForm<ClientCreateProfileType>({
     resolver: zodResolver(ClientCreateProfileSchema),
-    defaultValues: profile,
+    defaultValues,
   });
 
   const [editingField, setEditingField] = useState<string | null>(null);
@@ -1655,70 +2017,80 @@ export default function ProfileForm() {
     </Button>
   );
   return (
-    <div className="max-w-5xl mx-auto p-6 space-y-8">
-      <AppForm form={form} onSubmit={form.handleSubmit(handleSave)}>
-        <HeaderSection
-          form={form}
-          isEditing={isEditing}
-          FieldButtons={FieldButtons}
-        />
-        <WorkExperienceSection
-          form={form}
-          setFieldMode={setFieldMode}
-          isEditing={isEditing}
-          handleCancel={handleCancel}
-          FieldButtons={FieldButtons}
-          RemoveFieldButton={RemoveFieldButton}
-        />
-        <EducationSection
-          form={form}
-          isEditing={isEditing}
-          setFieldMode={setFieldMode}
-          handleCancel={handleCancel}
-          FieldButtons={FieldButtons}
-          RemoveFieldButton={RemoveFieldButton}
-        />
-        <CertificationsSection
-          form={form}
-          isEditing={isEditing}
-          setFieldMode={setFieldMode}
-          handleCancel={handleCancel}
-          FieldButtons={FieldButtons}
-          RemoveFieldButton={RemoveFieldButton}
-        />
-        <AwardsSection
-          form={form}
-          isEditing={isEditing}
-          setFieldMode={setFieldMode}
-          handleCancel={handleCancel}
-          FieldButtons={FieldButtons}
-          RemoveFieldButton={RemoveFieldButton}
-        />
-        <PublicationsSection
-          form={form}
-          isEditing={isEditing}
-          setFieldMode={setFieldMode}
-          handleCancel={handleCancel}
-          FieldButtons={FieldButtons}
-          RemoveFieldButton={RemoveFieldButton}
-        />
-        <LanguagesSection
-          form={form}
-          isEditing={isEditing}
-          setFieldMode={setFieldMode}
-          handleCancel={handleCancel}
-          FieldButtons={FieldButtons}
-          RemoveFieldButton={RemoveFieldButton}
-        />
-        <SocialsSection
-          form={form}
-          isEditing={isEditing}
-          setFieldMode={setFieldMode}
-          handleCancel={handleCancel}
-          FieldButtons={FieldButtons}
-          RemoveFieldButton={RemoveFieldButton}
-        />
-      </AppForm>
-    </div>
+    <AppForm
+      form={form}
+      onSubmit={form.handleSubmit(handleSave)}
+      className="space-y-8"
+    >
+      <HeaderSection
+        form={form}
+        isEditing={isEditing}
+        FieldButtons={FieldButtons}
+      />
+      <WorkExperienceSection
+        form={form}
+        setFieldMode={setFieldMode}
+        isEditing={isEditing}
+        handleCancel={handleCancel}
+        FieldButtons={FieldButtons}
+        RemoveFieldButton={RemoveFieldButton}
+      />
+      <EducationSection
+        form={form}
+        isEditing={isEditing}
+        setFieldMode={setFieldMode}
+        handleCancel={handleCancel}
+        FieldButtons={FieldButtons}
+        RemoveFieldButton={RemoveFieldButton}
+      />
+      <CertificationsSection
+        form={form}
+        isEditing={isEditing}
+        setFieldMode={setFieldMode}
+        handleCancel={handleCancel}
+        FieldButtons={FieldButtons}
+        RemoveFieldButton={RemoveFieldButton}
+      />
+      <AwardsSection
+        form={form}
+        isEditing={isEditing}
+        setFieldMode={setFieldMode}
+        handleCancel={handleCancel}
+        FieldButtons={FieldButtons}
+        RemoveFieldButton={RemoveFieldButton}
+      />
+      <PublicationsSection
+        form={form}
+        isEditing={isEditing}
+        setFieldMode={setFieldMode}
+        handleCancel={handleCancel}
+        FieldButtons={FieldButtons}
+        RemoveFieldButton={RemoveFieldButton}
+      />
+      <LanguagesSection
+        form={form}
+        isEditing={isEditing}
+        setFieldMode={setFieldMode}
+        handleCancel={handleCancel}
+        FieldButtons={FieldButtons}
+        RemoveFieldButton={RemoveFieldButton}
+      />
+      <ProjectsSection
+        form={form}
+        isEditing={isEditing}
+        setFieldMode={setFieldMode}
+        handleCancel={handleCancel}
+        FieldButtons={FieldButtons}
+        RemoveFieldButton={RemoveFieldButton}
+      />
+      <SocialsSection
+        form={form}
+        isEditing={isEditing}
+        setFieldMode={setFieldMode}
+        handleCancel={handleCancel}
+        FieldButtons={FieldButtons}
+        RemoveFieldButton={RemoveFieldButton}
+      />
+    </AppForm>
   );
 }

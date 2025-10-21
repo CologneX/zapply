@@ -2,7 +2,7 @@
 
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
-import { ClientCreateProfileType, CreateProfileSchema, CreateProfileType, ProfileType } from "@/types/profile.types";
+import { ClientCreateProfileType, CreateProfileSchema, ProfileType } from "@/types/profile.types";
 import { ObjectId } from "mongodb";
 import { headers } from "next/headers";
 

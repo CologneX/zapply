@@ -1,6 +1,5 @@
 "use client";
 import React, { useState } from "react";
-import { useRouter } from "next/navigation";
 import {
   Navbar,
   NavBody,
@@ -22,16 +21,16 @@ export function Header({ user }: { user: User | null }) {
     },
   ];
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const router = useRouter();
+  // const router = useRouter();
 
-  const handleOpenSettings = () => {
-    const params = new URLSearchParams(window.location.search);
-    params.set("settings", "account");
-    const qs = params.toString();
-    router.push(`${window.location.pathname}${qs ? `?${qs}` : ""}`, {
-      scroll: false,
-    });
-  };
+  // const handleOpenSettings = () => {
+  //   const params = new URLSearchParams(window.location.search);
+  //   params.set("settings", "account");
+  //   const qs = params.toString();
+  //   router.push(`${window.location.pathname}${qs ? `?${qs}` : ""}`, {
+  //     scroll: false,
+  //   });
+  // };
   return (
     <Navbar>
       <NavBody>
@@ -44,11 +43,7 @@ export function Header({ user }: { user: User | null }) {
           )}
           {user && (
             <>
-              <NavbarButton
-                as="button"
-                variant="secondary"
-                onClick={handleOpenSettings}
-              >
+              <NavbarButton variant="secondary" href="?settings=account">
                 Setting
               </NavbarButton>
               <NavbarButton variant="gradient" href={RouteURL.DASHBOARD}>

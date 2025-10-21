@@ -1,34 +1,36 @@
 "use server";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
-import { geminiClient } from "@/lib/gen-ai";
-import { CreateResumeSchema, CreateResumeType } from "@/types/resume.types";
+import { ClientCreateResumeType, CreateResumeSchema, CreateResumeType } from "@/types/resume.types";
 import { ObjectId } from "mongodb";
 import { headers } from "next/headers";
 
 
-export async function generateResumeSuggestions(payload: CreateResumeType) {
-    const parsed = CreateResumeSchema.safeParse(payload);
-    if (!parsed.success) return {
-        error: parsed.error.message
-    }
 
+
+export async function CreateResumeAction(data: ClientCreateResumeType) {
     const session = await auth.api.getSession({
         headers: await headers(),
-    })
-    if (!session?.user) return { error: "Unauthorized" };
-
-    const profile = await db.collection("profiles").findOne({ user_id: new ObjectId(session.user.id), deletedAt: null });
-    if (!profile) return { error: "Profile not found. Please create your profile first." };
-
-    const jsonSchema = { /* JSON schema for structured output (see earlier example) */ };
-    const gen = await geminiClient.models.generateContent({
-        model: "gemini-2.5-flash",
-        contents: JSON.stringify({ profile, jobTitle: parsed.data.jobTitle, jobDescription: parsed.data.jobDescription }),
-        config: {
-
-        }
     });
+    if (!session?.user?.id) {
+        return { error: "Unauthorized" };
+    }
+    const newResume: CreateResumeType = {
+        ...data,
+        user_id: new ObjectId(session.user.id),
+        _id: new ObjectId(),
+        deletedAt: null,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+    };
 
-    return { suggestions: gen };
+    const resume = CreateResumeSchema.safeParse(newResume);
+    if (!resume.success) {
+        return { error: "Invalid resume data" };
+    }
+
+    const result = await db.collection("resumes").insertOne(resume.data);
+    if (!result.acknowledged) {
+        return { error: "Failed to create resume" };
+    }
 }

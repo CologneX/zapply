@@ -1,5 +1,5 @@
+import { BaseTimestamps, ObjectIdtoStringSchema, DateToStringSchema } from "./helper.types";
 import { z } from "zod";
-import { BaseTimestamps, ObjectIdtoStringSchema } from "./helper.types";
 import { ObjectId } from "bson";
 
 // Social Schema
@@ -28,8 +28,8 @@ export const WorkExperienceSchema = z.object({
     location: z.string().optional(),
     type: z.enum(["Full-time", "Part-time", "Freelance", "Internship", "Volunteer", "Contract", "Other"]).optional(),
     description: z.string().optional(),
-    startDate: z.date().refine((d) => d instanceof Date && !isNaN(d.getTime()), { message: "Pick a start date — time travel is not supported yet!" }),
-    endDate: z.date().optional(),
+    startDate: DateToStringSchema,
+    endDate: DateToStringSchema.optional(),
     isCurrent: z.boolean().optional(),
 });
 
@@ -40,8 +40,8 @@ export const CreateWorkExperienceSchema = z.object({
     location: z.string().optional(),
     type: z.enum(["Full-time", "Part-time", "Freelance", "Internship", "Volunteer", "Contract", "Other"]).optional(),
     description: z.string().optional(),
-    startDate: z.date().refine((d) => d instanceof Date && !isNaN(d.getTime()), { message: "Start date is required — the calendar insists!" }),
-    endDate: z.date().optional(),
+    startDate: DateToStringSchema,
+    endDate: DateToStringSchema.optional(),
     isCurrent: z.boolean().optional(),
 });
 
@@ -51,7 +51,7 @@ export const ClientCreateWorkExperienceSchema = z.object({
     location: z.string().optional(),
     type: z.enum(["Full-time", "Part-time", "Freelance", "Internship", "Volunteer", "Contract", "Other"]).optional(),
     description: z.string().optional(),
-    startDate: z.date().refine((d) => d instanceof Date && !isNaN(d.getTime()), { message: "Start date needed — history needs a timestamp!" }),
+    startDate: z.date(),
     endDate: z.date().optional(),
     isCurrent: z.boolean().optional(),
 });
@@ -63,8 +63,8 @@ export const EducationSchema = z.object({
     institution: z.string().min(2, "School/Institution needs a name (2+ chars) — diplomas prefer labels."),
     location: z.string().optional(),
     degree: z.string().min(2, "Degree must have a title (e.g., BSc, MSc) — 2+ chars."),
-    startDate: z.date().refine((d) => d instanceof Date && !isNaN(d.getTime()), { message: "When did this scholarly adventure begin? Pick a start date." }),
-    endDate: z.date().optional(),
+    startDate: DateToStringSchema,
+    endDate: DateToStringSchema.optional(),
     isCurrent: z.boolean().optional(),
 });
 
@@ -74,8 +74,8 @@ export const CreateEducationSchema = z.object({
     institution: z.string().min(2, "Institution name please — at least 2 characters."),
     location: z.string().optional(),
     degree: z.string().min(2, "Degree title too tiny — use 2+ characters."),
-    startDate: z.date().refine((d) => d instanceof Date && !isNaN(d.getTime()), { message: "Start date required — your academic timeline awaits!" }),
-    endDate: z.date().optional(),
+    startDate: DateToStringSchema,
+    endDate: DateToStringSchema.optional(),
     isCurrent: z.boolean().optional(),
 });
 
@@ -84,7 +84,7 @@ export const ClientCreateEducationSchema = z.object({
     institution: z.string().min(2, "Where did you study? Institution name needs 2+ characters."),
     location: z.string().optional(),
     degree: z.string().min(2, "Degree title please (2+ chars) — diplomas like to be named."),
-    startDate: z.date().refine((d) => d instanceof Date && !isNaN(d.getTime()), { message: "Please choose a start date — commencement music not included." }),
+    startDate: z.date(),
     endDate: z.date().optional(),
     isCurrent: z.boolean().optional(),
 });
@@ -95,8 +95,8 @@ export const CertificationSchema = z.object({
     _id: ObjectIdtoStringSchema,
     name: z.string().min(2, "Certification name needs at least 2 characters — wear it proudly!"),
     issuer: z.string().min(2, "Who's the issuer? (2+ chars) — we love credible sources."),
-    startDate: z.date().refine((d) => d instanceof Date && !isNaN(d.getTime()), { message: "When did you earn it? Pick a date so we can celebrate." }),
-    endDate: z.date().optional(),
+    startDate: DateToStringSchema,
+    endDate: DateToStringSchema.optional(),
     credentialId: z.string().optional(),
     url: z.string().optional(),
 });
@@ -105,8 +105,8 @@ export const CreateCertificationSchema = z.object({
     _id: z.custom<ObjectId>().default(() => new ObjectId()).optional(),
     name: z.string().min(2, "Certification name too short — give it 2+ characters."),
     issuer: z.string().min(2, "Issuer name needed (2+ chars)."),
-    startDate: z.date().refine((d) => d instanceof Date && !isNaN(d.getTime()), { message: "Please add the date you received this certificate." }),
-    endDate: z.date().optional(),
+    startDate: DateToStringSchema,
+    endDate: DateToStringSchema.optional(),
     credentialId: z.string().optional(),
     url: z.string().optional(),
 });
@@ -114,7 +114,7 @@ export const CreateCertificationSchema = z.object({
 export const ClientCreateCertificationSchema = z.object({
     name: z.string().min(2, "What's the certification called? (2+ chars)"),
     issuer: z.string().min(2, "Who's the issuer? (2+ chars)"),
-    startDate: z.date().refine((d) => d instanceof Date && !isNaN(d.getTime()), { message: "When did you earn this? Add a date." }),
+    startDate: z.date(),
     endDate: z.date().optional(),
     credentialId: z.string().optional(),
     url: z.string().optional(),
@@ -126,7 +126,7 @@ export const AwardOrHonorSchema = z.object({
     name: z.string().min(2, "Award name needs at least 2 characters — brag a little!"),
     institution: z.string().min(2, "Who awarded it? Institution name needs 2+ chars."),
     description: z.string().optional(),
-    date: z.date().refine((d) => d instanceof Date && !isNaN(d.getTime()), { message: "Pick the date of glory — when did this happen?" }),
+    date: DateToStringSchema,
     url: z.string().optional(),
 });
 
@@ -135,7 +135,7 @@ export const CreateAwardOrHonorSchema = z.object({
     name: z.string().min(2, "What's the award called? (2+ chars) — humble brag incoming."),
     institution: z.string().min(2, "Issuer name please (2+ chars)."),
     description: z.string().optional(),
-    date: z.date().refine((d) => d instanceof Date && !isNaN(d.getTime()), { message: "Please add the date this award was received." }),
+    date: DateToStringSchema,
     url: z.string().optional(),
 });
 
@@ -143,7 +143,7 @@ export const ClientCreateAwardOrHonorSchema = z.object({
     name: z.string().min(2, "Give your award a name (2+ chars) — shine on."),
     institution: z.string().min(2, "Who gave it to you? (2+ chars)."),
     description: z.string().optional(),
-    date: z.date().refine((d) => d instanceof Date && !isNaN(d.getTime()), { message: "When did this happen? Add a date." }),
+    date: z.date(),
     url: z.string().optional(),
 });
 
@@ -153,7 +153,7 @@ export const PublicationSchema = z.object({
     _id: ObjectIdtoStringSchema,
     title: z.string().min(2, "Title too short — make your publication proud (2+ chars)."),
     // authors: z.array(z.string().min(2)),
-    date: z.date().refine((d) => d instanceof Date && !isNaN(d.getTime()), { message: "Pick the publication date so we can cite you properly." }),
+    date: DateToStringSchema,
     url: z.string().optional(),
 });
 
@@ -161,14 +161,14 @@ export const CreatePublicationSchema = z.object({
     _id: z.custom<ObjectId>().default(() => new ObjectId()).optional(),
     title: z.string().min(2, "Give it a proper title (2+ chars) — don't be shy."),
     // authors: z.array(z.string().min(2)),
-    date: z.date().refine((d) => d instanceof Date && !isNaN(d.getTime()), { message: "When was this published? Add a date." }),
+    date: DateToStringSchema,
     url: z.string().optional(),
 });
 
 export const ClientCreatePublicationSchema = z.object({
     title: z.string().min(2, "Title please (2+ chars) — make it catchy or classy)."),
     // authors: z.array(z.string().min(2)),
-    date: z.date().refine((d) => d instanceof Date && !isNaN(d.getTime()), { message: "Add a publication date so the bibliography is happy." }),
+    date: z.date(),
     url: z.string().optional(),
 });
 
@@ -218,7 +218,7 @@ export const ClientCreateLanguageSchema = z.object({
 
 export const ProjectSchema = z.object({
     _id: ObjectIdtoStringSchema,
-    user_id: ObjectIdtoStringSchema,
+    // user_id: ObjectIdtoStringSchema,
     name: z.string().min(1, "Project needs a name — even secret labs have titles."),
     description: z.string().min(1, "Describe your project so mere mortals can understand it."),
     shortDescription: z.string().min(1, "Short description is required — give us the elevator pitch!"),
@@ -226,7 +226,7 @@ export const ProjectSchema = z.object({
     role: z.array(z.string()).optional(),
     repositoryUrl: z.string().optional(),
     liveUrl: z.string().optional(),
-    startedAt: z.date().refine((d) => d instanceof Date && !isNaN(d.getTime()), { message: "When did this project start? Add a date so we can timeline it." }),
+    startedAt: z.date(),
 })
 
 export const CreateProjectSchema = z.object({
@@ -238,7 +238,7 @@ export const CreateProjectSchema = z.object({
     role: z.array(z.string()).optional(),
     repositoryUrl: z.string().optional(),
     liveUrl: z.string().optional(),
-    startedAt: z.date().refine((d) => d instanceof Date && !isNaN(d.getTime()), { message: "Add a start date for the project — history loves dates." }),
+    startedAt: z.date()
 })
 
 export const ClientCreateProjectSchema = z.object({
@@ -249,11 +249,11 @@ export const ClientCreateProjectSchema = z.object({
     role: z.array(z.string()).optional(),
     repositoryUrl: z.string().optional(),
     liveUrl: z.string().optional(),
-    startedAt: z.date().refine((d) => d instanceof Date && !isNaN(d.getTime()), { message: "When did you kick off this project? Add a date." }),
+    startedAt: z.date(),
 })
 
 export const ProfileSchema = z.object({
-    user_id: ObjectIdtoStringSchema,
+    // user_id: ObjectIdtoStringSchema,
     name: z.string().optional(),
     description: z.string().optional(),
     headline: z.string().optional(),
@@ -269,14 +269,15 @@ export const ProfileSchema = z.object({
     awardOrHonors: z.array(AwardOrHonorSchema).optional(),
     publications: z.array(PublicationSchema).optional(),
     languages: z.array(LanguageSchema).optional(),
+    projects: z.array(ProjectSchema).optional(),
 }).extend(BaseTimestamps.shape);
 
 export const CreateProfileSchema = z.object({
-    name: z.string().optional(),
-    email: z.email().optional(),
-    mobile: z.e164().optional(),
-    description: z.string().optional(),
-    headline: z.string().optional(),
+    name: z.string(),
+    email: z.email(),
+    mobile: z.e164(),
+    description: z.string(),
+    headline: z.string(),
     location: z.string().optional(),
     socials: z.array(CreateSocialSchema).optional(),
     projects: z.array(CreateProjectSchema).optional(),
@@ -325,4 +326,75 @@ export type ClientCreateCertificationType = z.infer<typeof ClientCreateCertifica
 export type ClientCreateAwardOrHonorType = z.infer<typeof ClientCreateAwardOrHonorSchema>;
 export type ClientCreatePublicationType = z.infer<typeof ClientCreatePublicationSchema>;
 export type ClientCreateLanguageType = z.infer<typeof ClientCreateLanguageSchema>;
-export type ClientCreateProfileType = z.infer<typeof ClientCreateProfileSchema>;    
+export type ClientCreateProjectType = z.infer<typeof ClientCreateProjectSchema>;
+export type ClientCreateProfileType = z.infer<typeof ClientCreateProfileSchema>;
+
+// ...existing schemas...
+
+// Add a transformation schema that converts server types to client types
+export const ProfileToClientCreateProfileSchema = ProfileSchema.transform((profile) => ({
+    name: profile.name,
+    email: profile.email,
+    mobile: profile.mobile,
+    description: profile.description,
+    headline: profile.headline,
+    location: profile.location,
+    socials: profile.socials?.map((social) => ({
+        name: social.name,
+        url: social.url,
+    })),
+    workExperiences: profile.workExperiences?.map((exp) => ({
+        name: exp.name,
+        company: exp.company,
+        location: exp.location,
+        type: exp.type,
+        description: exp.description,
+        startDate: new Date(exp.startDate),
+        endDate: exp.endDate ? new Date(exp.endDate) : undefined,
+        isCurrent: exp.isCurrent,
+    })),
+    educations: profile.educations?.map((edu) => ({
+        name: edu.name,
+        institution: edu.institution,
+        location: edu.location,
+        degree: edu.degree,
+        startDate: new Date(edu.startDate),
+        endDate: edu.endDate ? new Date(edu.endDate) : undefined,
+        isCurrent: edu.isCurrent,
+    })),
+    certifications: profile.certifications?.map((cert) => ({
+        name: cert.name,
+        issuer: cert.issuer,
+        credentialId: cert.credentialId,
+        url: cert.url,
+        startDate: new Date(cert.startDate),
+        endDate: cert.endDate ? new Date(cert.endDate) : undefined,
+    })),
+    awardOrHonors: profile.awardOrHonors?.map((award) => ({
+        name: award.name,
+        institution: award.institution,
+        description: award.description,
+        date: new Date(award.date),
+        url: award.url,
+    })),
+    publications: profile.publications?.map((pub) => ({
+        title: pub.title,
+        date: new Date(pub.date),
+        url: pub.url,
+    })),
+    languages: profile.languages?.map((lang) => ({
+        name: lang.name,
+        proficiency: lang.proficiency,
+        level: lang.level,
+    })),
+    projects: profile.projects?.map((proj) => ({
+        name: proj.name,
+        description: proj.description,
+        shortDescription: proj.shortDescription,
+        technologies: proj.technologies,
+        role: proj.role,
+        repositoryUrl: proj.repositoryUrl,
+        liveUrl: proj.liveUrl,
+        startedAt: new Date(proj.startedAt),
+    })),
+})) as unknown as z.ZodType<ClientCreateProfileType>;

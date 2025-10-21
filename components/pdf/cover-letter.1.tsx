@@ -31,21 +31,19 @@ const tw = createTw({
   },
 });
 
-interface CoverLetterPDFProps {
-  coverLetter: CoverLetterType;
-  userEmail?: string;
-  userName?: string;
-  userPhone?: string;
-  userLocation?: string;
-}
-
 export default function CoverLetterPDF1({
   coverLetter,
-  userEmail = "contact@example.com",
-  userName = "Your Name",
-  userPhone = "+1 (555) 000-0000",
-  userLocation = "City, State",
-}: CoverLetterPDFProps) {
+  userEmail,
+  userName,
+  userPhone,
+  userLocation,
+}: {
+  coverLetter: CoverLetterType;
+  userEmail: string;
+  userName: string;
+  userPhone: string;
+  userLocation: string;
+}) {
   const today = new Date();
   const dateString = today.toLocaleDateString("en-US", {
     year: "numeric",
@@ -86,9 +84,7 @@ export default function CoverLetterPDF1({
           <Text style={tw("text-sm font-semibold text-slate-700")}>
             {coverLetter.companyName}
           </Text>
-          <Text style={tw("text-sm text-slate-600")}>
-            Hiring Manager
-          </Text>
+          <Text style={tw("text-sm text-slate-600")}>Hiring Manager</Text>
         </View>
 
         {/* Greeting */}
@@ -124,9 +120,7 @@ export default function CoverLetterPDF1({
           style={tw("absolute bottom-md left-md right-md text-center")}
         >
           <Text
-            style={tw(
-              "text-xs text-slate-400 border-t border-slate-200 pt-sm"
-            )}
+            style={tw("text-xs text-slate-400 border-t border-slate-200 pt-sm")}
           >
             {userEmail} • {userPhone}
           </Text>

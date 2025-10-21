@@ -2,9 +2,8 @@
 
 import * as React from "react";
 import { CalendarIcon } from "lucide-react";
-import { format } from "date-fns";
 
-import { cn } from "@/lib/utils";
+import { cn, formatMonth } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import {
@@ -34,18 +33,23 @@ export function DatePicker({
         <Button
           variant="outline"
           className={cn(
-            "w-full justify-start text-left font-normal glass",
+            "justify-start text-left font-normal",
             !value && "text-muted-foreground",
             className
           )}
           disabled={disabled}
         >
           <CalendarIcon className="mr-2 size-4" />
-          {value ? format(value, "PPP") : <span>{placeholder}</span>}
+          {value ? formatMonth(value) : <span>{placeholder}</span>}
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-auto p-0">
-        <Calendar mode="single" selected={value} onSelect={onChange} />
+        <Calendar
+          mode="single"
+          selected={value}
+          onSelect={onChange}
+          captionLayout="dropdown"
+        />
       </PopoverContent>
     </Popover>
   );

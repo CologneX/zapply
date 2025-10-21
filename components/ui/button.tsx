@@ -60,13 +60,15 @@ function Button({
       data-slot="button"
       className={cn(buttonVariants({ variant, size, className }))}
       aria-busy={loading}
+      // type="button"
       data-loading={loading}
       {...props}
       disabled={isDisabled}
     >
-      {loading && <Loader className="animate-spin" />}
-
-      {props.children}
+      <>
+        {loading && <Loader className="animate-spin" />}
+        {props.children}
+      </>
     </Comp>
   );
 }

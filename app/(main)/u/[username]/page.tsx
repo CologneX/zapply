@@ -13,12 +13,26 @@ export default async function UserProfilePage({
     if (!username) {
       return (
         <ErrorPageWrapper>
-          <h2 className="text-center">Username is required</h2>
+          <h2 className="text-center">Where is the username?</h2>
         </ErrorPageWrapper>
       );
     }
-    const profileRaw = await db.collection("profiles").findOne({
+
+    // Find user by username
+    const user = await db.collection("user").findOne({
       username: username,
+    });
+
+    if (!user) {
+      return (
+        <ErrorPageWrapper>
+          <h2 className="text-center">Whoops, this profile doesn&apos;t exist</h2>
+        </ErrorPageWrapper>
+      );
+    }
+
+    const profileRaw = await db.collection("profiles").findOne({
+      user_id: user._id,
       deletedAt: null,
     });
 
@@ -27,7 +41,7 @@ export default async function UserProfilePage({
     if (!profile || !profile.success) {
       return (
         <ErrorPageWrapper>
-          <h2 className="text-center">Profile not found</h2>
+          <h2 className="text-center">Whoops, this profile doesn&apos;t exist</h2>
         </ErrorPageWrapper>
       );
     }

@@ -100,7 +100,7 @@ export default function CoverLetterForm() {
     }
   };
   return (
-    <AppForm form={form} className="container mx-auto grid grid-cols-2 h-full">
+    <AppForm form={form} className="grid grid-cols-2">
       <div className="space-y-8 overflow-y-auto p-2 relative">
         <FormField
           control={form.control}

@@ -28,7 +28,6 @@ export default async function ProfilePage() {
           user_id: new ObjectId(session.user.id),
           deletedAt: null,
         });
-
         const profile = ProfileSchema.safeParse(rawprofile);
         if (!profile.success) {
           console.error("Profile validation failed:", profile.error);
@@ -39,8 +38,7 @@ export default async function ProfilePage() {
     });
     return (
       <HydrationBoundary state={dehydrate(queryClient)}>
-        <div>
-          {/* <h1>Profile Page</h1> */}
+        <div className="container mx-auto py-4">
           <ProfileForm />
         </div>
       </HydrationBoundary>

@@ -62,13 +62,13 @@ export function DialogProvider({ children }: { children: ReactNode }) {
       {children}
       <Dialog
         open={open}
-        onOpenChange={(isOpen) => {
+        onOpenChange={(isOpen: boolean) => {
           setOpen(isOpen);
           if (payload?.onCloseAction && !isOpen) payload.onCloseAction();
           if (!isOpen) setPayload(null);
         }}
       >
-        <DialogContent showCloseButton={payload?.showCloseButton ?? true}>
+        <DialogContent>
           {payload ? (
             <>
               <DialogTitle hidden>{payload.title}</DialogTitle>

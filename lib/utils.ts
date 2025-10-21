@@ -1,4 +1,6 @@
+import { ProfileType } from "@/types/profile.types";
 import { clsx, type ClassValue } from "clsx"
+import { format } from "date-fns";
 import { twMerge } from "tailwind-merge"
 
 export function cn(...inputs: ClassValue[]) {
@@ -25,3 +27,50 @@ export const ActionErrorWrapper = async <T>(
 
   return result;
 };
+
+// export const downloadPDF = (pdfData: Uint8Array, fileName: string) => {
+//   const blob = new Blob([pdfData], { type: "application/pdf" });
+//   const url = URL.createObjectURL(blob);
+//   const link = document.createElement("a");
+//   link.href = url;
+//   link.download = fileName;
+//   document.body.appendChild(link);
+//   link.click();
+//   document.body.removeChild(link);
+//   URL.revokeObjectURL(url);
+// }
+
+export function transformProfileDates(profile: ProfileType) {
+  return {
+    ...profile,
+    createdAt: new Date(profile.createdAt),
+    updatedAt: new Date(profile.updatedAt),
+    workExperiences: profile.workExperiences?.map((exp) => ({
+      ...exp,
+      startDate: new Date(exp.startDate),
+      endDate: exp.endDate ? new Date(exp.endDate) : undefined,
+    })),
+    educations: profile.educations?.map((edu) => ({
+      ...edu,
+      startDate: new Date(edu.startDate),
+      endDate: edu.endDate ? new Date(edu.endDate) : undefined,
+    })),
+    certifications: profile.certifications?.map((cert) => ({
+      ...cert,
+      startDate: new Date(cert.startDate),
+      endDate: cert.endDate ? new Date(cert.endDate) : undefined,
+    })),
+    awardOrHonors: profile.awardOrHonors?.map((award) => ({
+      ...award,
+      date: new Date(award.date),
+    })),
+    publications: profile.publications?.map((pub) => ({
+      ...pub,
+      date: new Date(pub.date),
+    })),
+  };
+}
+
+export const formatMonth = (date?: Date) => {
+  return date ? format(date, 'MMM yyyy') : '';
+}

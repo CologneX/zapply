@@ -1,5 +1,5 @@
 import { ProfileAction } from "@/services/profile.service";
-import { ClientCreateProfileType } from "@/types/profile.types";
+import { ClientCreateProfileType, ProfileSchema } from "@/types/profile.types";
 import { useMutation, useQuery } from "@tanstack/react-query"
 import { toast } from "sonner";
 
@@ -16,7 +16,8 @@ export const useProfileQuery = () => {
                 const error = await response.json();
                 throw new Error(error.error || "Failed to fetch profile");
             }
-            return response.json();
+            const profile = ProfileSchema.parse(await response.json());
+            return profile;
         }
     })
 

@@ -12,7 +12,6 @@ import {
   LinkIcon,
   ExternalLinkIcon,
 } from "lucide-react";
-import { format } from "date-fns";
 import {
   ProfileType,
   WorkExperienceType,
@@ -23,6 +22,7 @@ import {
   LanguageType,
   SocialType,
 } from "@/types/profile.types";
+import { formatMonth } from "@/lib/utils";
 
 interface ProfileDisplayProps {
   profile: ProfileType;
@@ -120,13 +120,13 @@ function WorkExperienceSection({
               <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
                 {exp.startDate && (
                   <>
-                    <span>{format(new Date(exp.startDate), "MMM yyyy")}</span>
+                    <span>{formatMonth(new Date(exp.startDate))}</span>
                     {exp.isCurrent ? (
                       <span>— Present</span>
                     ) : exp.endDate ? (
                       <>
                         <span>—</span>
-                        <span>{format(new Date(exp.endDate), "MMM yyyy")}</span>
+                        <span>{formatMonth(new Date(exp.endDate))}</span>
                       </>
                     ) : null}
                   </>
@@ -180,13 +180,13 @@ function EducationSection({ educations }: { educations: EducationType[] }) {
               <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
                 {edu.startDate && (
                   <>
-                    <span>{format(new Date(edu.startDate), "MMM yyyy")}</span>
+                    <span>{formatMonth(new Date(edu.startDate))}</span>
                     {edu.isCurrent ? (
                       <span>— Present</span>
                     ) : edu.endDate ? (
                       <>
                         <span>—</span>
-                        <span>{format(new Date(edu.endDate), "MMM yyyy")}</span>
+                        <span>{formatMonth(new Date(edu.endDate))}</span>
                       </>
                     ) : null}
                   </>
@@ -253,7 +253,7 @@ function CertificationsSection({
 
               <div className="flex items-center gap-2 text-sm text-muted-foreground mt-2">
                 {cert.startDate && (
-                  <span>{format(new Date(cert.startDate), "MMM yyyy")}</span>
+                  <span>{formatMonth(new Date(cert.startDate))}</span>
                 )}
               </div>
 
@@ -270,11 +270,7 @@ function CertificationsSection({
   );
 }
 
-function AwardsSection({
-  awards,
-}: {
-  awards: AwardOrHonorType[];
-}) {
+function AwardsSection({ awards }: { awards: AwardOrHonorType[] }) {
   if (!awards || awards.length === 0) {
     return null;
   }
@@ -312,7 +308,7 @@ function AwardsSection({
 
               {award.date && (
                 <p className="text-sm text-muted-foreground mt-2">
-                  {format(new Date(award.date), "MMMM yyyy")}
+                  {formatMonth(new Date(award.date))}
                 </p>
               )}
 
@@ -366,7 +362,7 @@ function PublicationsSection({
 
               {pub.date && (
                 <p className="text-sm text-muted-foreground mt-1">
-                  {format(new Date(pub.date), "MMMM yyyy")}
+                  {formatMonth(new Date(pub.date))}
                 </p>
               )}
             </div>
