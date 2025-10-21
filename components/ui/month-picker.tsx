@@ -85,13 +85,13 @@ function MonthPicker({
         <Button
           variant="outline"
           className={cn(
-            "justify-start text-left font-normal",
+            "justify-start text-left font-normal w-fit",
             !selectedMonth && "text-muted-foreground",
             className
           )}
           disabled={disabled}
         >
-          <CalendarIcon className="mr-2 size-4" />
+          <CalendarIcon className="size-4" />
           {selectedMonth ? (
             formatMonth(selectedMonth)
           ) : (
@@ -99,27 +99,21 @@ function MonthPicker({
           )}
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-auto p-0">
-        <div
-          className={cn("min-w-[200px] w-[280px] p-3", className)}
-          {...props}
-        >
-          <div className="flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0">
-            <div className="space-y-4 w-full">
-              <MonthCal
-                onMonthSelect={onMonthSelect}
-                callbacks={callbacks}
-                selectedMonth={selectedMonth}
-                onYearBackward={onYearBackward}
-                onYearForward={onYearForward}
-                variant={variant}
-                minDate={minDate}
-                maxDate={maxDate}
-                disabledDates={disabledDates}
-              ></MonthCal>
-            </div>
-          </div>
-        </div>
+      <PopoverContent
+        className={cn("min-w-[200px] w-[280px] p-2", className)}
+        {...props}
+      >
+        <MonthCal
+          onMonthSelect={onMonthSelect}
+          callbacks={callbacks}
+          selectedMonth={selectedMonth}
+          onYearBackward={onYearBackward}
+          onYearForward={onYearForward}
+          variant={variant}
+          minDate={minDate}
+          maxDate={maxDate}
+          disabledDates={disabledDates}
+        />
       </PopoverContent>
     </Popover>
   );
