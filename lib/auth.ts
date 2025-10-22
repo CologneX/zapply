@@ -7,6 +7,8 @@ import { db } from "./db";
 
 export const auth = betterAuth({
     database: mongodbAdapter(db),
+    appName: "zapply",
+    basePath: "/api/v1/auth",
     plugins: [
         emailOTP({
             allowedAttempts: 5,
@@ -41,6 +43,13 @@ export const auth = betterAuth({
             maxAge: 5 * 60,
         },
     },
+    socialProviders: {
+        google: ({
+            prompt: "select_account",
+            clientId: process.env.GOOGLE_CLIENT_ID || "",
+            clientSecret: process.env.GOOGLE_CLIENT_SECRET || "",
+        }),
+    }
 });
 
 

@@ -1,4 +1,3 @@
-import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -10,23 +9,22 @@ import { Separator } from "@/components/ui/separator";
 import SignUpForm from "./_component/form";
 import Link from "next/link";
 import { RouteURL } from "@/lib/routes";
-import { Linkedin } from "lucide-react";
-
+import { SignInWithGoogle } from "@/components/common/signin-socials-button";
 export default function SignUpPage() {
   return (
     <div className="w-full flex items-center justify-center bg-gradient-to-br from-background to-muted/20 p-4">
       <div className="w-full max-w-md space-y-6">
         {/* Header */}
         <div className="text-center space-y-2">
-          <h3 className="tracking-tight">Selamat Datang</h3>
+          <h3 className="tracking-tight">Welcome</h3>
         </div>
 
         {/* Sign In Card */}
         <Card className="border-0 shadow-2xl">
           <CardHeader className="space-y-1">
-            <CardTitle className="text-2xl font-semibold">Daftar</CardTitle>
+            <CardTitle className="text-2xl font-semibold">Sign Up</CardTitle>
             <CardDescription>
-              Masukkan detail Anda untuk membuat akun
+              Enter your details to create an account
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -42,27 +40,21 @@ export default function SignUpPage() {
               </div>
               <div className="relative flex justify-center text-xs uppercase">
                 <span className="bg-card px-2 text-muted-foreground">
-                  Atau lanjutkan dengan
+                  Or continue with
                 </span>
               </div>
             </div>
 
             {/* Google Sign Up */}
-            <Button
-              variant="outline"
-              className="w-full h-11 text-base font-medium"
-            >
-              <Linkedin />
-              Daftar dengan LinkedIn
-            </Button>
+            <SignInWithGoogle />
           </CardContent>
         </Card>
 
         {/* Sign Up Link */}
         <p className="text-center text-sm text-muted-foreground">
-          Sudah punya akun?{" "}
+          Already have an account?{" "}
           <Link href={RouteURL.SIGNIN} className="link">
-            Masuk di sini
+            Sign in here
           </Link>
         </p>
       </div>

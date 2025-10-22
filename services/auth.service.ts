@@ -97,7 +97,10 @@ export const LogoutAction = async () => {
     await auth.api.signOut({
         headers: await headers(),
     });;
-    revalidatePath("/", "layout");
+    // revalidatePath({
+    //     ""
+    // });
+    redirect(RouteURL.HOME);
 }
 
 export const ConfirmEmailAction = async (data: ConfirmEmailRequestType) => {
@@ -139,4 +142,26 @@ export const ResendEmailVerificationAction = async ({ email }: { email: string }
         return { error: err.body?.message || "Failed to resend verification email." };
     }
     redirect(`${RouteURL.CONFIRM_EMAIL}?email=${encodeURIComponent(email)}&otpSent=true`);
+}
+
+export const AuthGoogleAction = async (): Promise<void> => {
+    let redirectURL: string = "";
+    try {
+        const data = await auth.api.signInSocial({
+            headers: await headers(),
+            body: {
+                provider: "google",
+                requestSignUp: true,
+            }
+        });
+        if (data && data.url) {
+            redirectURL = data.url;
+        }
+    } catch (error) {
+        const err = error as APIError;
+        console.error(err);
+        // On error, redirect back to sign-in with an error message so the form action matches expected signature
+        redirect(`${RouteURL.SIGNIN}?error=${encodeURIComponent(err.body?.message || "Failed to sign in with Google.")}`);
+    }
+    redirect(redirectURL);
 }

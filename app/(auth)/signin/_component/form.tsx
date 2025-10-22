@@ -34,8 +34,8 @@ export default function SignInForm() {
         control={form.control}
         name="username"
         render={({ field }) => (
-          <AppFormField label="Email">
-            <Input placeholder="Masukkan Username anda" {...field} />
+          <AppFormField label="Username">
+            <Input placeholder="Enter your username" {...field} />
           </AppFormField>
         )}
       />
@@ -43,15 +43,15 @@ export default function SignInForm() {
         control={form.control}
         name="password"
         render={({ field }) => (
-          <AppFormField label="Kata Sandi">
-            <PasswordField placeholder="Masukkan kata sandi Anda" {...field} />
+          <AppFormField label="Password">
+            <PasswordField placeholder="Enter your password" {...field} />
           </AppFormField>
         )}
       />
       {/* Forgot Password Link */}
       <div className="flex justify-end">
         <Link href={"/forgot-password"} className="link">
-          Lupa kata sandi?
+          Forgot your password?
         </Link>
       </div>
 
@@ -61,7 +61,7 @@ export default function SignInForm() {
         type="submit"
         loading={SignIn.isPending}
       >
-        Masuk
+        Sign In
       </Button>
     </AppForm>
   );

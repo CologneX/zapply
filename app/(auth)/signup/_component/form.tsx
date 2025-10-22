@@ -111,12 +111,8 @@ export default function SignUpForm() {
         )}
       />
 
-      <Button
-        className="w-full h-11 text-base font-medium"
-        type="submit"
-        loading={SignUp.isPending}
-      >
-        Daftar
+      <Button className="w-full h-11 text-base font-medium" type="submit" loading={SignUp.isPending}>
+        Sign Up
       </Button>
     </AppForm>
   );
