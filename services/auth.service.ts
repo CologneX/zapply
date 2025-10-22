@@ -4,7 +4,6 @@ import { auth } from "@/lib/auth";
 import { RouteURL } from "@/lib/routes";
 import { ConfirmEmailRequestSchema, ConfirmEmailRequestType, SignInRequestSchema, SignInRequestType, SignUpRequestSchema, SignUpRequestType } from "@/types/auth.types";
 import { APIError } from "better-auth";
-import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
@@ -97,9 +96,6 @@ export const LogoutAction = async () => {
     await auth.api.signOut({
         headers: await headers(),
     });;
-    // revalidatePath({
-    //     ""
-    // });
     redirect(RouteURL.HOME);
 }
 
@@ -164,4 +160,36 @@ export const AuthGoogleAction = async (): Promise<void> => {
         redirect(`${RouteURL.SIGNIN}?error=${encodeURIComponent(err.body?.message || "Failed to sign in with Google.")}`);
     }
     redirect(redirectURL);
+}
+
+export const ChangeUsernameAction = async (newUsername: string): Promise<{ error?: string }> => {
+    try {
+        const session = await auth.api.getSession({
+            headers: await headers(),
+        });
+        if (!session?.user) {
+            return { error: "Unauthorized" };
+        }
+
+        if (!newUsername || newUsername.trim() === "") {
+            return { error: "Username cannot be empty" };
+        }
+
+        const availability = await CheckUsernameAvailabilityAction(newUsername);
+        if (availability !== true) {
+            return { error: "Username is already taken" };
+        }
+
+        await auth.api.updateUser({
+            headers: await headers(),
+            body: {
+                username: newUsername,
+            }
+        });
+    } catch (error) {
+        const err = error as APIError;
+        console.error(err);
+        return { error: err.body?.message || "Failed to change username." };
+    }
+    return {};
 }

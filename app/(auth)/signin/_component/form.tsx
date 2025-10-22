@@ -8,7 +8,7 @@ import PasswordField from "@/components/common/password-field";
 import { Button } from "@/components/ui/button";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { SignInRequestSchema, SignInRequestType } from "@/types/auth.types";
-import Link from "next/link";
+// import Link from "next/link";
 import { useAuthQuery } from "@/hooks/query/use-auth";
 
 export default function SignInForm() {
@@ -49,11 +49,11 @@ export default function SignInForm() {
         )}
       />
       {/* Forgot Password Link */}
-      <div className="flex justify-end">
+      {/* <div className="flex justify-end">
         <Link href={"/forgot-password"} className="link">
           Forgot your password?
         </Link>
-      </div>
+      </div> */}
 
       {/* Sign In Button */}
       <Button

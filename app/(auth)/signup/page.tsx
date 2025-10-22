@@ -16,9 +16,11 @@ export default function SignUpPage() {
       <div className="w-full max-w-md space-y-6">
         {/* Header */}
         <div className="text-center space-y-2">
-          <h3 className="tracking-tight">Welcome</h3>
+          <h3>Welcome</h3>
+          <p className="text-muted-foreground">
+            Sign in to your account to continue
+          </p>
         </div>
-
         {/* Sign In Card */}
         <Card className="border-0 shadow-2xl">
           <CardHeader className="space-y-1">

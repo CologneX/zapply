@@ -76,7 +76,7 @@ export default function SignUpForm() {
         control={form.control}
         name="name"
         render={({ field }) => (
-          <AppFormField label="Nama">
+          <AppFormField label="Name">
             <Input type="text" {...field} />
           </AppFormField>
         )}
@@ -95,7 +95,7 @@ export default function SignUpForm() {
         control={form.control}
         name="password"
         render={({ field }) => (
-          <AppFormField label="Kata Sandi">
+          <AppFormField label="Password">
             <PasswordField {...field} />
           </AppFormField>
         )}
@@ -105,13 +105,17 @@ export default function SignUpForm() {
         control={form.control}
         name="confirmPassword"
         render={({ field }) => (
-          <AppFormField label="Konfirmasi Kata Sandi">
+          <AppFormField label="Confirm Password">
             <PasswordField {...field} />
           </AppFormField>
         )}
       />
 
-      <Button className="w-full h-11 text-base font-medium" type="submit" loading={SignUp.isPending}>
+      <Button
+        className="w-full h-11 text-base font-medium"
+        type="submit"
+        loading={SignUp.isPending}
+      >
         Sign Up
       </Button>
     </AppForm>

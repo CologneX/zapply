@@ -1,5 +1,5 @@
 import { ActionErrorWrapper } from "@/lib/utils";
-import { CheckUsernameAvailabilityAction, ConfirmEmailAction, LogoutAction, ResendEmailVerificationAction, SignInAction, SignUpAction } from "@/services/auth.service";
+import { ChangeUsernameAction, CheckUsernameAvailabilityAction, ConfirmEmailAction, LogoutAction, ResendEmailVerificationAction, SignInAction, SignUpAction } from "@/services/auth.service";
 import { ConfirmEmailRequestType, SignInRequestType, SignUpRequestType } from "@/types/auth.types";
 import { useMutation } from "@tanstack/react-query";
 
@@ -22,5 +22,10 @@ export const useAuthQuery = () => {
     const Logout = useMutation({
         mutationFn: async () => ActionErrorWrapper(LogoutAction()),
     });
-    return { SignIn, SignUp, CheckUsernameAvailability, ResendEmailVerification, ConfirmEmailOTP, Logout };
+    const ChangeUsername = useMutation({
+        mutationFn: async (username: string) => ActionErrorWrapper(ChangeUsernameAction(username))
+    });
+    return {
+        SignIn, SignUp, CheckUsernameAvailability, ResendEmailVerification, ConfirmEmailOTP, Logout, ChangeUsername,
+    };
 }
