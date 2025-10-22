@@ -28,32 +28,8 @@ export default function ResumeTailorPage() {
   const form = useForm<ClientCreateResumeType>({
     resolver: zodResolver(ClientCreateResumeSchema),
     defaultValues: {
-      jobDescription: `About the Role
-
-The Software Developer contributes to SCG Indonesia's digital transformation by designing, developing, and maintaining software solutions that enhance business operations. This role involves working closely with internal teams to build applications, improve system functionality, and deliver user-focused digital tools that support SCG's diverse businesses.
-
-
-Key Responsibilities
-
-Develop, test, and deploy software applications based on business requirements.
-Collaborate with cross-functional teams to design system features and integrations.
-Maintain and improve existing applications, ensuring performance, security, and scalability.
-Write clean, maintainable, and efficient code following best practices.
-Troubleshoot and resolve software defects or system issues in a timely manner.
-Participate in code reviews, testing processes, and documentation.
-Explore new technologies and suggest solutions that support SCG's digital initiatives.
-
-
-Qualifications
-
-Bachelor's degree in Computer Science, Software Engineering, or related field.
-1–3 years of experience in software development; strong internship experience may also be considered.
-Proficiency in one or more programming languages (e.g., Java, Python, C#, JavaScript).
-Familiarity with databases, APIs, and modern development frameworks.
-Knowledge of version control systems (e.g., Git) and agile development methods.
-Strong problem-solving skills and ability to work collaboratively.
-Communication proficiency in Bahasa Indonesia and English.`,
-      jobTitle: "Software Developer – SCG Indonesia",
+      jobDescription: "",
+      jobTitle: "",
       appliedSuggestions: [],
       keywordsMatched: [],
       keywordsMissing: [],
