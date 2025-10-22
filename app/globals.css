@@ -12,7 +12,6 @@
   --popover-foreground: oklch(0.3717 0.0392 257.287);
   --primary: oklch(0.5461 0.2152 262.8809);
   --primary-foreground: oklch(1 0 0);
-  /* ...existing code... */
   --secondary: oklch(0.9683 0.0069 247.8956);
   --secondary-foreground: oklch(0.3791 0.1378 265.5222);
   --muted: oklch(0.9842 0.0034 247.8575);
@@ -71,11 +70,6 @@
   --popover-foreground: oklch(0.9842 0.0034 247.8575);
   --primary: oklch(0.5461 0.2152 262.8809);
   --primary-foreground: oklch(1 0 0);
-  /* Glassmorphism variables (dark) */
-  --glass-bg: oklch(0.2077 0.0398 265.7549 / 0.26);
-  --glass-bg-accent: oklch(0.5461 0.2152 262.8809 / 0.08);
-  --glass-border: oklch(1 0 0 / 0.06);
-  --glass-shadow: 0 12px 36px hsl(223 30% / 30%);
   --secondary: oklch(0.2795 0.0368 260.031);
   --secondary-foreground: oklch(0.9842 0.0034 247.8575);
   --muted: oklch(0.2795 0.0368 260.031);
@@ -187,36 +181,6 @@ body {
 }
 
 /* Glassmorphism components for Tailwind */
-@layer components {
-  .glass {
-    /* layout */
-    @apply rounded-md overflow-hidden;
-
-    /* visual tint using the primary blue accent */
-    background: linear-gradient(180deg, var(--glass-bg-accent), var(--glass-bg));
-
-    /* frosted backdrop */
-    -webkit-backdrop-filter: blur(14px) saturate(120%);
-    backdrop-filter: blur(14px) saturate(120%);
-
-    /* border + shadow driven by CSS variables so they follow theme */
-    border: 1px solid var(--glass-border);
-    box-shadow: var(--glass-shadow);
-  }
-
-  .glass-sm { @apply p-2; }
-  .glass-md { @apply p-4; }
-
-  @media (prefers-reduced-transparency: reduce) {
-    .glass {
-      -webkit-backdrop-filter: none;
-      backdrop-filter: none;
-      background: var(--glass-bg);
-      box-shadow: none;
-      border: 1px solid oklch(0.9288 0.0126 255.5078 / 0.04);
-    }
-  }
-}
 
 h1, h2, h3, h4, h5, h6 {
   @apply font-semibold tracking-tight;
