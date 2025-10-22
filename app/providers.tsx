@@ -1,7 +1,6 @@
 "use client";
 
 import DialogProvider from "@/components/common/dialog";
-import { SidebarProvider } from "@/components/ui/sidebar";
 import { Toaster } from "@/components/ui/sonner";
 import { queryClientOptions } from "@/lib/query-client";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -11,10 +10,8 @@ export default function Providers({ children }: { children: React.ReactNode }) {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <SidebarProvider>
-        <DialogProvider>{children}</DialogProvider>
-        <Toaster position="top-center" />
-      </SidebarProvider>
+      <DialogProvider>{children}</DialogProvider>
+      <Toaster position="bottom-left" />
     </QueryClientProvider>
   );
 }
