@@ -43,28 +43,28 @@ export const ActionErrorWrapper = async <T>(
 export function transformProfileDates(profile: ProfileType) {
   return {
     ...profile,
-    createdAt: new Date(profile.createdAt),
-    updatedAt: new Date(profile.updatedAt),
-    workExperiences: profile.workExperiences?.map((exp) => ({
+    createdAt: profile?.createdAt ? new Date(profile.createdAt) : undefined,
+    updatedAt: profile?.updatedAt ? new Date(profile.updatedAt) : undefined,
+    workExperiences: profile?.workExperiences?.map((exp) => ({
       ...exp,
       startDate: new Date(exp.startDate),
       endDate: exp.endDate ? new Date(exp.endDate) : undefined,
     })),
-    educations: profile.educations?.map((edu) => ({
+    educations: profile?.educations?.map((edu) => ({
       ...edu,
       startDate: new Date(edu.startDate),
       endDate: edu.endDate ? new Date(edu.endDate) : undefined,
     })),
-    certifications: profile.certifications?.map((cert) => ({
+    certifications: profile?.certifications?.map((cert) => ({
       ...cert,
       startDate: new Date(cert.startDate),
       endDate: cert.endDate ? new Date(cert.endDate) : undefined,
     })),
-    awardOrHonors: profile.awardOrHonors?.map((award) => ({
+    awardOrHonors: profile?.awardOrHonors?.map((award) => ({
       ...award,
       date: new Date(award.date),
     })),
-    publications: profile.publications?.map((pub) => ({
+    publications: profile?.publications?.map((pub) => ({
       ...pub,
       date: new Date(pub.date),
     })),

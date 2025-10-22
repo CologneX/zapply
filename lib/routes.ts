@@ -20,6 +20,7 @@ export enum RouteURL {
     EDIT_RESUME = "/edit-resume",
     CREATE_COVER_LETTER = "/create-cover-letter",
     EDIT_COVER_LETTER = "/edit-cover-letter",
+    USER = "/u",
 }
 
 export const routesMap: Partial<Record<RouteURL, RouteItems>> = {
@@ -77,6 +78,11 @@ export const routesMap: Partial<Record<RouteURL, RouteItems>> = {
         title: "Edit Cover Letter",
         url: RouteURL.EDIT_COVER_LETTER,
         description: "Update your cover letter",
+    },
+    [RouteURL.USER]: {
+        title: "User Profile",
+        url: RouteURL.USER,
+        description: "View user profiles",
     },
 };
 

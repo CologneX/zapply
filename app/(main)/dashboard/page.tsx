@@ -10,6 +10,7 @@ import { ScrollContainer } from "@/app/(main)/dashboard/_components/scroll-conta
 import { CoverLetterCard } from "@/app/(main)/dashboard/_components/cover-letter-card";
 import { ResumeCard } from "@/app/(main)/dashboard/_components/resume-card";
 import { ObjectId } from "mongodb";
+import { ProfileSchema } from "@/types/profile.types";
 
 export default async function DashboardPage() {
   const session = await auth.api.getSession({
@@ -66,18 +67,27 @@ export default async function DashboardPage() {
 
   const resumes = resumesResult.data;
 
+  const profileRaw = await db
+    .collection("profiles")
+    .findOne({ user_id: new ObjectId(session.user.id) });
+  const profileResult = ProfileSchema.safeParse(profileRaw);
+  const profile = profileResult.success ? profileResult.data : null;
+  
+
+  const canCreateCoverLetterAndResume = !!(profile !== null && profile.name && profile.email && profile.description && profile.headline);
+
   return (
     <div className="flex flex-col gap-8 px-4 mx-auto container py-8">
       {/* Page Title */}
       <div>
-        <h1 className="text-4xl font-bold mb-2">Dashboard</h1>
+        <h1>Dashboard</h1>
         <p className="text-muted-foreground">
           Manage your resumes and cover letters
         </p>
       </div>
 
       {/* Hero Buttons */}
-      <HeroButtonsSection />
+      <HeroButtonsSection canCreateCoverLetterAndResume={canCreateCoverLetterAndResume} />
 
       {/* Cover Letters Section */}
       <DashboardSection

@@ -24,7 +24,15 @@ import React, { useState } from "react";
 import { useForm, useFieldArray, UseFormReturn } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { formatMonth } from "@/lib/utils";
-import { PenIcon, CheckIcon, XIcon, PlusIcon, TrashIcon } from "lucide-react";
+import {
+  PenIcon,
+  CheckIcon,
+  XIcon,
+  PlusIcon,
+  TrashIcon,
+  MapPinIcon,
+  ExternalLinkIcon,
+} from "lucide-react";
 import { FormField } from "@/components/ui/form";
 import {
   Select,
@@ -49,25 +57,87 @@ function HeaderSection({
   isEditing: (fieldName: string) => boolean;
   FieldButtons: (fieldName: string) => React.ReactNode;
 }) {
+  const name = form.watch("name");
+  const headline = form.watch("headline");
+  const email = form.watch("email");
+  const mobile = form.watch("mobile");
+  const location = form.watch("location");
+  const description = form.watch("description");
+
   return (
     <div className="space-y-4">
-      {/* Header with Name and Headline */}
-      <div className="space-y-2">
-        {!isEditing("name") ? (
+      {/* General Information - Grouped */}
+      {!isEditing("general") ? (
+        <motion.div layout className="space-y-4">
+          {/* Header with Name and Headline */}
+          <div className="space-y-2 group relative">
+            <div className="flex items-baseline justify-between">
+              <div className="flex-1">
+                <h1>{name || "Add your name"}</h1>
+                <p className="text-lg text-muted-foreground mt-1">
+                  {headline || "Your professional headline"}
+                </p>
+              </div>
+              <div className="opacity-0 group-hover:opacity-100 transition-opacity">
+                {FieldButtons("general")}
+              </div>
+            </div>
+          </div>
+
+          {/* Contact & Location Info - Compact Inline */}
+          <div className="flex flex-wrap items-center gap-3">
+            <motion.div layout className="group relative flex-1 min-w-[150px]">
+              <div className="rounded-lg border border-border bg-muted/30 p-3 transition-colors group-hover:bg-muted/60">
+                <p className="text-xs font-medium text-muted-foreground mb-1">
+                  Email
+                </p>
+                <p className="text-sm truncate">{email || "—"}</p>
+              </div>
+            </motion.div>
+
+            <motion.div layout className="group relative flex-1 min-w-[150px]">
+              <div className="rounded-lg border border-border bg-muted/30 p-3 transition-colors group-hover:bg-muted/60">
+                <p className="text-xs font-medium text-muted-foreground mb-1">
+                  Phone
+                </p>
+                <p className="text-sm truncate">{mobile || "—"}</p>
+              </div>
+            </motion.div>
+
+            <motion.div layout className="group relative flex-1 min-w-[150px]">
+              <div className="rounded-lg border border-border bg-muted/30 p-3 transition-colors group-hover:bg-muted/60">
+                <p className="text-xs font-medium text-muted-foreground mb-1">
+                  Location
+                </p>
+                <p className="text-sm truncate">{location || "—"}</p>
+              </div>
+            </motion.div>
+          </div>
+
+          {/* About Section */}
           <motion.div
             layout
-            className="flex items-baseline justify-between group"
+            className="group relative rounded-lg border border-border bg-muted/20 p-4 transition-colors hover:bg-muted/40"
           >
-            <div className="flex-1">
-              <h1>{form.getValues("name") || "Add your name"}</h1>
-              <p className="text-lg text-muted-foreground mt-1">
-                {form.getValues("headline") || "Your professional headline"}
-              </p>
-            </div>
-            {FieldButtons("name")}
+            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2">
+              About
+            </p>
+            <p className="text-sm leading-relaxed text-foreground/80">
+              {description ||
+                "Tell us about yourself, your experience, and what you're passionate about..."}
+            </p>
           </motion.div>
-        ) : (
-          <motion.div layout className="space-y-3">
+        </motion.div>
+      ) : (
+        <motion.div
+          layout
+          className="rounded-lg border border-border bg-background p-4 space-y-3"
+        >
+          <div className="flex items-center justify-between mb-4">
+            <h6>Edit General Information</h6>
+            {FieldButtons("general")}
+          </div>
+          <div className="grid gap-3">
             <FormField
               name="name"
               control={form.control}
@@ -89,38 +159,11 @@ function HeaderSection({
                 </AppFormField>
               )}
             />
-            <div className="flex gap-2 justify-end">{FieldButtons("name")}</div>
-          </motion.div>
-        )}
-      </div>
-
-      {/* Contact & Location Info - Compact Inline */}
-      <div className="flex flex-wrap items-center gap-3">
-        {!isEditing("email") ? (
-          <motion.div
-            layout
-            className="group relative flex-1 min-w-[150px]"
-            onClick={() => false}
-          >
-            <div className="rounded-lg border border-border bg-muted/30 p-3 transition-colors group-hover:bg-muted/60">
-              <p className="text-xs font-medium text-muted-foreground mb-1">
-                Email
-              </p>
-              <p className="text-sm truncate">
-                {form.getValues("email") || "—"}
-              </p>
-              <div className="absolute inset-0 flex items-center justify-end pr-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                {FieldButtons("email")}
-              </div>
-            </div>
-          </motion.div>
-        ) : (
-          <motion.div layout>
             <FormField
               name="email"
               control={form.control}
               render={({ field }) => (
-                <AppFormField>
+                <AppFormField label="Email">
                   <Input
                     type="email"
                     placeholder="email@example.com"
@@ -129,31 +172,11 @@ function HeaderSection({
                 </AppFormField>
               )}
             />
-            {FieldButtons("email")}
-          </motion.div>
-        )}
-
-        {!isEditing("mobile") ? (
-          <motion.div layout className="group relative flex-1 min-w-[150px]">
-            <div className="rounded-lg border border-border bg-muted/30 p-3 transition-colors group-hover:bg-muted/60">
-              <p className="text-xs font-medium text-muted-foreground mb-1">
-                Phone
-              </p>
-              <p className="text-sm truncate">
-                {form.getValues("mobile") || "—"}
-              </p>
-              <div className="absolute inset-0 flex items-center justify-end pr-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                {FieldButtons("mobile")}
-              </div>
-            </div>
-          </motion.div>
-        ) : (
-          <motion.div layout>
             <FormField
               name="mobile"
               control={form.control}
               render={({ field }) => (
-                <AppFormField>
+                <AppFormField label="Phone">
                   <Input
                     type="tel"
                     placeholder="+1 (555) 000-0000"
@@ -162,81 +185,28 @@ function HeaderSection({
                 </AppFormField>
               )}
             />
-            {FieldButtons("mobile")}
-          </motion.div>
-        )}
-
-        {!isEditing("location") ? (
-          <motion.div layout className="group relative flex-1 min-w-[150px]">
-            <div className="rounded-lg border border-border bg-muted/30 p-3 transition-colors group-hover:bg-muted/60">
-              <p className="text-xs font-medium text-muted-foreground mb-1">
-                Location
-              </p>
-              <p className="text-sm truncate">
-                {form.getValues("location") || "—"}
-              </p>
-              <div className="absolute inset-0 flex items-center justify-end pr-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                {FieldButtons("location")}
-              </div>
-            </div>
-          </motion.div>
-        ) : (
-          <motion.div layout>
             <FormField
               name="location"
               control={form.control}
               render={({ field }) => (
-                <AppFormField>
+                <AppFormField label="Location">
                   <Input placeholder="City, Country" {...field} />
                 </AppFormField>
               )}
             />
-            {FieldButtons("location")}
-          </motion.div>
-        )}
-      </div>
-
-      {/* About Section */}
-      {!isEditing("description") ? (
-        <motion.div
-          layout
-          className="group relative rounded-lg border border-border bg-muted/20 p-4 transition-colors hover:bg-muted/40"
-        >
-          <div className="flex items-start justify-between mb-2">
-            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
-              About
-            </p>
-            <div className="opacity-0 group-hover:opacity-100 transition-opacity">
-              {FieldButtons("description")}
-            </div>
-          </div>
-          <p className="text-sm leading-relaxed text-foreground/80">
-            {form.getValues("description") ||
-              "Tell us about yourself, your experience, and what you're passionate about..."}
-          </p>
-        </motion.div>
-      ) : (
-        <motion.div layout className="space-y-3">
-          <div className="flex items-center justify-between">
-            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
-              About
-            </p>
-          </div>
-          <FormField
-            name="description"
-            control={form.control}
-            render={({ field }) => (
-              <AppFormField>
-                <Textarea
-                  placeholder="Tell us about yourself..."
-                  {...field}
-                  rows={4}
-                />
-              </AppFormField>
-            )}
-          />
-          <div className="flex gap-2 justify-end">
-            {FieldButtons("description")}
+            <FormField
+              name="description"
+              control={form.control}
+              render={({ field }) => (
+                <AppFormField label="About">
+                  <Textarea
+                    placeholder="Tell us about yourself..."
+                    {...field}
+                    rows={4}
+                  />
+                </AppFormField>
+              )}
+            />
           </div>
         </motion.div>
       )}
@@ -276,7 +246,7 @@ function WorkExperienceSection({
   });
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-2">
       <div className="flex items-center justify-between">
         <h3>Work Experience</h3>
         <Button
@@ -307,73 +277,71 @@ function WorkExperienceSection({
               >
                 {!isEditing(`workExperiences.${index}`) ? (
                   <div className="group relative rounded-lg border border-border bg-muted/20 p-3 transition-all hover:bg-muted/40 hover:border-border/80">
-                    <div className="flex items-start justify-between">
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-baseline gap-2 flex-wrap">
-                          <h5>
-                            {form.getValues(`workExperiences.${index}.name`)}
-                          </h5>
-                          <span className="text-xs text-muted-foreground">
-                            at{" "}
-                            {form.getValues(`workExperiences.${index}.company`)}
-                          </span>
-                        </div>
-                        <div className="flex items-center gap-2 mt-1 text-xs text-muted-foreground flex-wrap">
+                    <div className="flex items-start justify-between gap-2 mb-1">
+                      <div>
+                        <h6>{form.watch(`workExperiences.${index}.name`)}</h6>
+                        <p className="text-xs text-muted-foreground">
+                          {form.watch(`workExperiences.${index}.company`)} -{" "}
                           <span>
-                            {form.getValues(`workExperiences.${index}.type`)}
+                            {form.watch(`workExperiences.${index}.type`)}
                           </span>
-                          {form.getValues(
-                            `workExperiences.${index}.location`
-                          ) && (
-                            <span>
-                              •{" "}
-                              {form.getValues(
-                                `workExperiences.${index}.location`
-                              )}
-                            </span>
-                          )}
-                          <span>
-                            •{" "}
-                            {formatMonth(
-                              form.getValues(
-                                `workExperiences.${index}.startDate`
-                              )
-                            )}{" "}
-                            -{" "}
-                            {form.getValues(
-                              `workExperiences.${index}.isCurrent`
-                            )
-                              ? "Present"
-                              : formatMonth(
-                                  form.getValues(
-                                    `workExperiences.${index}.endDate`
-                                  )
-                                )}
-                          </span>
-                        </div>
-                        {form.getValues(
-                          `workExperiences.${index}.description`
-                        ) && (
-                          <div
-                            className="mt-2 text-xs leading-relaxed text-muted-foreground prose prose-sm max-w-none"
-                            dangerouslySetInnerHTML={{
-                              __html: DOMPurify.sanitize(
-                                form.getValues(
-                                  `workExperiences.${index}.description`
-                                ) || ""
-                              ),
-                            }}
-                          />
-                        )}
+                        </p>
                       </div>
+
                       <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                         {FieldButtons(`workExperiences.${index}`)}
                         {RemoveFieldButton(() => removeWork(index))}
                       </div>
                     </div>
+
+                    <div className="flex items-center gap-2 text-xs text-muted-foreground mb-1.5">
+                      {form.watch(`workExperiences.${index}.startDate`) && (
+                        <>
+                          <span>
+                            {formatMonth(
+                              form.watch(`workExperiences.${index}.startDate`)
+                            )}
+                          </span>
+                          {form.watch(`workExperiences.${index}.isCurrent`) ? (
+                            <span>— Present</span>
+                          ) : form.watch(`workExperiences.${index}.endDate`) ? (
+                            <>
+                              <span>—</span>
+                              <span>
+                                {formatMonth(
+                                  form.watch(`workExperiences.${index}.endDate`)
+                                )}
+                              </span>
+                            </>
+                          ) : null}
+                        </>
+                      )}
+                    </div>
+
+                    {form.watch(`workExperiences.${index}.location`) && (
+                      <div className="flex items-center gap-1 text-xs text-muted-foreground mb-1.5">
+                        <MapPinIcon className="h-3 w-3" />
+                        <span>
+                          {form.watch(`workExperiences.${index}.location`)}
+                        </span>
+                      </div>
+                    )}
+
+                    {form.watch(`workExperiences.${index}.description`) && (
+                      <div
+                        className="text-sm leading-relaxed text-muted-foreground prose prose-sm max-w-none"
+                        dangerouslySetInnerHTML={{
+                          __html: DOMPurify.sanitize(
+                            form.watch(
+                              `workExperiences.${index}.description`
+                            ) || ""
+                          ),
+                        }}
+                      />
+                    )}
                   </div>
                 ) : (
-                  <div className="rounded-lg border border-border bg-background p-4 space-y-3">
+                  <div className="rounded-lg border border-border bg-background p-4 space-y-2">
                     <div className="flex items-center justify-between">
                       <h6>Edit Position</h6>
                       {FieldButtons(`workExperiences.${index}`, () =>
@@ -564,7 +532,7 @@ function EducationSection({
   });
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-2">
       <div className="flex items-center justify-between">
         <h3>Education</h3>
         <Button
@@ -594,48 +562,65 @@ function EducationSection({
                 transition={{ duration: 0.2 }}
               >
                 {!isEditing(`educations.${index}`) ? (
-                  <div className="group relative rounded-lg border border-border bg-muted/20 p-3 transition-all hover:bg-muted/40 hover:border-border/80">
-                    <div className="flex items-start justify-between">
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-baseline gap-2 flex-wrap">
-                          <h5>
-                            {form.getValues(`educations.${index}.degree`)}
-                          </h5>
-                          <span className="text-xs text-muted-foreground">
-                            in {form.getValues(`educations.${index}.name`)}
-                          </span>
-                        </div>
-                        <p className="text-xs text-muted-foreground mt-1">
-                          {form.getValues(`educations.${index}.institution`)}
+                  <div className="rounded-lg border border-border bg-muted/20 p-3 hover:bg-muted/40 transition-colors group">
+                    <div className="flex items-start justify-between gap-2 mb-1">
+                      <div>
+                        <h6>{form.watch(`educations.${index}.degree`)}</h6>
+                        <p className="text-xs text-muted-foreground">
+                          {form.watch(`educations.${index}.institution`)}
                         </p>
-                        <div className="flex items-center gap-2 mt-1 text-xs text-muted-foreground flex-wrap">
-                          {form.getValues(`educations.${index}.location`) && (
-                            <span>
-                              {form.getValues(`educations.${index}.location`)}
-                            </span>
-                          )}
-                          <span>
-                            •{" "}
-                            {formatMonth(
-                              form.getValues(`educations.${index}.startDate`)
-                            )}{" "}
-                            -{" "}
-                            {form.getValues(`educations.${index}.isCurrent`)
-                              ? "Present"
-                              : formatMonth(
-                                  form.getValues(`educations.${index}.endDate`)
-                                )}
-                          </span>
-                        </div>
                       </div>
+
                       <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                         {FieldButtons(`educations.${index}`)}
                         {RemoveFieldButton(() => removeEducation(index))}
                       </div>
                     </div>
+
+                    <div className="flex items-center gap-2 text-xs text-muted-foreground mb-1.5">
+                      {form.watch(`educations.${index}.startDate`) && (
+                        <>
+                          <span>
+                            {formatMonth(
+                              form.watch(`educations.${index}.startDate`)
+                            )}
+                          </span>
+                          {form.watch(`educations.${index}.isCurrent`) ? (
+                            <span>— Present</span>
+                          ) : form.watch(`educations.${index}.endDate`) ? (
+                            <>
+                              <span>—</span>
+                              <span>
+                                {formatMonth(
+                                  form.watch(`educations.${index}.endDate`)
+                                )}
+                              </span>
+                            </>
+                          ) : null}
+                        </>
+                      )}
+                    </div>
+
+                    {form.watch(`educations.${index}.location`) && (
+                      <div className="flex items-center gap-1 text-xs text-muted-foreground mb-1.5">
+                        <MapPinIcon className="h-3 w-3" />
+                        <span>
+                          {form.watch(`educations.${index}.location`)}
+                        </span>
+                      </div>
+                    )}
+
+                    {form.watch(`educations.${index}.name`) && (
+                      <p className="text-xs text-muted-foreground">
+                        Field:{" "}
+                        <span className="text-foreground">
+                          {form.watch(`educations.${index}.name`)}
+                        </span>
+                      </p>
+                    )}
                   </div>
                 ) : (
-                  <div className="rounded-lg border border-border bg-background p-4 space-y-3">
+                  <div className="rounded-lg border border-border bg-background p-4 space-y-2">
                     <div className="flex items-center justify-between">
                       <h6>Edit Education</h6>
                       {FieldButtons(`educations.${index}`, () =>
@@ -779,7 +764,7 @@ function CertificationsSection({
     startDate: new Date(),
   });
   return (
-    <div className="space-y-3">
+    <div className="space-y-2">
       <div className="flex items-center justify-between">
         <h3>Certifications</h3>
         <Button
@@ -815,32 +800,41 @@ function CertificationsSection({
                   <div className="group relative rounded-lg border border-border bg-muted/20 p-3 transition-all hover:bg-muted/40 hover:border-border/80">
                     <div className="flex items-start justify-between">
                       <div className="flex-1 min-w-0">
-                        <h5>
-                          {form.getValues(`certifications.${index}.name`)}
-                        </h5>
+                        <h6>{form.watch(`certifications.${index}.name`)}</h6>
                         <p className="text-xs text-muted-foreground">
-                          {form.getValues(`certifications.${index}.issuer`)}
+                          {form.watch(`certifications.${index}.issuer`)}
                         </p>
                         <div className="flex items-center gap-2 mt-1 text-xs text-muted-foreground flex-wrap">
                           <span>
                             {formatMonth(
-                              form.getValues(
-                                `certifications.${index}.startDate`
-                              )
+                              form.watch(`certifications.${index}.startDate`)
                             )}
                           </span>
-                          {form.getValues(
+                          {form.watch(
                             `certifications.${index}.credentialId`
                           ) && (
                             <span>
                               • ID:{" "}
-                              {form.getValues(
+                              {form.watch(
                                 `certifications.${index}.credentialId`
                               )}
                             </span>
                           )}
                         </div>
+                        {form.watch(`certifications.${index}.url`) && (
+                          <Link
+                            href={
+                              form.watch(`certifications.${index}.url`) || ""
+                            }
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-xs text-primary hover:underline inline-block mt-1"
+                          >
+                            View Credential →
+                          </Link>
+                        )}
                       </div>
+
                       <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                         {FieldButtons(`certifications.${index}`)}
                         {RemoveFieldButton(() => removeCertification(index))}
@@ -848,7 +842,7 @@ function CertificationsSection({
                     </div>
                   </div>
                 ) : (
-                  <div className="rounded-lg border border-border bg-background p-4 space-y-3">
+                  <div className="rounded-lg border border-border bg-background p-4 space-y-2">
                     <div className="flex items-center justify-between">
                       <h6>Edit Certification</h6>
                       {FieldButtons(`certifications.${index}`, () =>
@@ -974,7 +968,7 @@ function AwardsSection({
   });
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-2">
       <div className="flex items-center justify-between">
         <h3>Awards & Honors</h3>
         <Button
@@ -1007,27 +1001,43 @@ function AwardsSection({
                   <div className="group relative rounded-lg border border-border bg-muted/20 p-3 transition-all hover:bg-muted/40 hover:border-border/80">
                     <div className="flex items-start justify-between">
                       <div className="flex-1 min-w-0">
-                        <h5>{form.getValues(`awardOrHonors.${index}.name`)}</h5>
+                        <h6>{form.watch(`awardOrHonors.${index}.name`)}</h6>
                         <p className="text-xs text-muted-foreground">
-                          {form.getValues(`awardOrHonors.${index}.institution`)}
+                          {form.watch(`awardOrHonors.${index}.institution`)}
                         </p>
-                        {form.getValues(`awardOrHonors.${index}.date`) && (
+                        {form.watch(`awardOrHonors.${index}.date`) && (
                           <p className="text-xs text-muted-foreground mt-1">
                             {formatMonth(
-                              form.getValues(`awardOrHonors.${index}.date`)
+                              form.watch(`awardOrHonors.${index}.date`)
                             )}
                           </p>
                         )}
-                        {form.getValues(
-                          `awardOrHonors.${index}.description`
-                        ) && (
-                          <p className="text-xs text-muted-foreground mt-2">
-                            {form.getValues(
-                              `awardOrHonors.${index}.description`
-                            )}
-                          </p>
+                        {form.watch(`awardOrHonors.${index}.description`) && (
+                          <div
+                            className="text-sm leading-relaxed text-muted-foreground prose prose-sm max-w-none mt-2"
+                            dangerouslySetInnerHTML={{
+                              __html: DOMPurify.sanitize(
+                                form.watch(
+                                  `awardOrHonors.${index}.description`
+                                ) || ""
+                              ),
+                            }}
+                          />
+                        )}
+                        {form.watch(`awardOrHonors.${index}.url`) && (
+                          <Link
+                            href={
+                              form.watch(`awardOrHonors.${index}.url`) || ""
+                            }
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-xs text-primary hover:underline inline-block mt-2"
+                          >
+                            View Award →
+                          </Link>
                         )}
                       </div>
+
                       <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                         {FieldButtons(`awardOrHonors.${index}`)}
                         {RemoveFieldButton(() => removeAward(index))}
@@ -1035,7 +1045,7 @@ function AwardsSection({
                     </div>
                   </div>
                 ) : (
-                  <div className="rounded-lg border border-border bg-background p-4 space-y-3">
+                  <div className="rounded-lg border border-border bg-background p-4 space-y-2">
                     <div className="flex items-center justify-between">
                       <h6>Edit Award</h6>
                       {FieldButtons(`awardOrHonors.${index}`, () =>
@@ -1138,7 +1148,7 @@ function PublicationsSection({
     url: "",
   });
   return (
-    <div className="space-y-3">
+    <div className="space-y-2">
       <div className="flex items-center justify-between">
         <h3>Publications</h3>
         <Button
@@ -1169,21 +1179,19 @@ function PublicationsSection({
               >
                 {!isEditing(`publications.${index}`) ? (
                   <div className="group relative rounded-lg border border-border bg-muted/20 p-3 transition-all hover:bg-muted/40 hover:border-border/80">
-                    <div className="flex items-start justify-between">
+                    <div className="flex items-start justify-between gap-2">
                       <div className="flex-1 min-w-0">
-                        <h6>{form.getValues(`publications.${index}.title`)}</h6>
-                        {form.getValues(`publications.${index}.date`) && (
+                        <h6>{form.watch(`publications.${index}.title`)}</h6>
+                        {form.watch(`publications.${index}.date`) && (
                           <p className="text-xs text-muted-foreground mt-1">
                             {formatMonth(
-                              form.getValues(`publications.${index}.date`)
+                              form.watch(`publications.${index}.date`)
                             )}
                           </p>
                         )}
-                        {form.getValues(`publications.${index}.url`) && (
+                        {form.watch(`publications.${index}.url`) && (
                           <Link
-                            href={
-                              form.getValues(`publications.${index}.url`) || ""
-                            }
+                            href={form.watch(`publications.${index}.url`) || ""}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="text-xs text-primary hover:underline inline-block mt-1"
@@ -1199,7 +1207,7 @@ function PublicationsSection({
                     </div>
                   </div>
                 ) : (
-                  <div className="rounded-lg border border-border bg-background p-4 space-y-3">
+                  <div className="rounded-lg border border-border bg-background p-4 space-y-2">
                     <div className="flex items-center justify-between">
                       <h6>Edit Publication</h6>
                       {FieldButtons(`publications.${index}`, () =>
@@ -1280,7 +1288,7 @@ function LanguagesSection({
     level: "A1",
   });
   return (
-    <div className="space-y-3">
+    <div className="space-y-2">
       <div className="flex items-center justify-between">
         <h3>Languages</h3>
         <Button
@@ -1313,11 +1321,11 @@ function LanguagesSection({
                   <div className="group relative rounded-lg border border-border bg-muted/20 p-3 transition-all hover:bg-muted/40 hover:border-border/80 flex items-center justify-between">
                     <div className="flex-1">
                       <div className="flex items-center gap-2 flex-wrap">
-                        <h6>{form.getValues(`languages.${index}.name`)}</h6>
+                        <h6>{form.watch(`languages.${index}.name`)}</h6>
                         <Badge variant="secondary" className="text-xs">
-                          {form.getValues(`languages.${index}.proficiency`)}
-                          {form.getValues(`languages.${index}.level`) &&
-                            ` · ${form.getValues(`languages.${index}.level`)}`}
+                          {form.watch(`languages.${index}.proficiency`)}
+                          {form.watch(`languages.${index}.level`) &&
+                            ` · ${form.watch(`languages.${index}.level`)}`}
                         </Badge>
                       </div>
                     </div>
@@ -1327,7 +1335,7 @@ function LanguagesSection({
                     </div>
                   </div>
                 ) : (
-                  <div className="rounded-lg border border-border bg-background p-4 space-y-3">
+                  <div className="rounded-lg border border-border bg-background p-4 space-y-2">
                     <div className="flex items-center justify-between">
                       <h6>Edit Language</h6>
                       {FieldButtons(`languages.${index}`, () =>
@@ -1446,7 +1454,7 @@ function ProjectsSection({
   });
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-2">
       <div className="flex items-center justify-between">
         <h3>Projects</h3>
         <Button
@@ -1479,21 +1487,32 @@ function ProjectsSection({
                   <div className="group relative rounded-lg border border-border bg-muted/20 p-3 transition-all hover:bg-muted/40 hover:border-border/80 space-y-2">
                     <div className="flex items-start justify-between">
                       <div className="flex-1 min-w-0">
-                        <h5>{form.getValues(`projects.${index}.name`)}</h5>
-                        <p className="text-xs text-muted-foreground">
-                          {form.getValues(`projects.${index}.shortDescription`)}
-                        </p>
+                        <h5>{form.watch(`projects.${index}.name`)}</h5>
+                        {form.watch(`projects.${index}.shortDescription`) && (
+                          <p className="text-xs text-muted-foreground">
+                            {form.watch(`projects.${index}.shortDescription`)}
+                          </p>
+                        )}
                       </div>
                       <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                         {FieldButtons(`projects.${index}`)}
                         {RemoveFieldButton(() => removeProject(index))}
                       </div>
                     </div>
-                    {form.getValues(`projects.${index}.technologies`)
-                      ?.length ? (
+                    {form.watch(`projects.${index}.description`) && (
+                      <div
+                        className="text-sm leading-relaxed text-muted-foreground prose prose-sm max-w-none"
+                        dangerouslySetInnerHTML={{
+                          __html: DOMPurify.sanitize(
+                            form.watch(`projects.${index}.description`) || ""
+                          ),
+                        }}
+                      />
+                    )}
+                    {form.watch(`projects.${index}.technologies`)?.length ? (
                       <div className="flex flex-wrap gap-1">
                         {form
-                          .getValues(`projects.${index}.technologies`)
+                          .watch(`projects.${index}.technologies`)
                           ?.map((tech) => (
                             <Badge
                               key={tech}
@@ -1505,53 +1524,49 @@ function ProjectsSection({
                           ))}
                       </div>
                     ) : null}
-                    {form.getValues(`projects.${index}.role`)?.length ? (
+                    {form.watch(`projects.${index}.role`)?.length ? (
                       <div className="flex flex-wrap gap-1">
-                        {form.getValues(`projects.${index}.role`)?.map((r) => (
+                        {form.watch(`projects.${index}.role`)?.map((r) => (
                           <Badge key={r} variant="outline" className="text-xs">
                             {r}
                           </Badge>
                         ))}
                       </div>
                     ) : null}
-                    <div className="flex items-center justify-between pt-2">
+                    <div className="flex items-center gap-2 pt-2">
+                      {form.watch(`projects.${index}.repositoryUrl`) && (
+                        <Link
+                          href={
+                            form.watch(`projects.${index}.repositoryUrl`) || ""
+                          }
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-xs text-primary flex gap-1 items-center hover:underline"
+                        >
+                          <ExternalLinkIcon className="h-3 w-3" />
+                          <span>Repository Link</span>
+                        </Link>
+                      )}
+                      {form.watch(`projects.${index}.liveUrl`) && (
+                        <Link
+                          href={form.watch(`projects.${index}.liveUrl`) || ""}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-xs text-primary flex gap-1 items-center hover:underline"
+                        >
+                          <ExternalLinkIcon className="h-3 w-3" />{" "}
+                          <span>Live Link</span>
+                        </Link>
+                      )}
+                    </div>
+                    <div className="flex items-center pt-2">
                       <span className="text-xs text-muted-foreground">
-                        {formatMonth(
-                          form.getValues(`projects.${index}.startedAt`)
-                        )}
+                        {formatMonth(form.watch(`projects.${index}.startedAt`))}
                       </span>
-                      <div className="flex gap-2">
-                        {form.getValues(`projects.${index}.repositoryUrl`) && (
-                          <Link
-                            href={
-                              form.getValues(
-                                `projects.${index}.repositoryUrl`
-                              ) || ""
-                            }
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-xs text-primary hover:underline"
-                          >
-                            Code
-                          </Link>
-                        )}
-                        {form.getValues(`projects.${index}.liveUrl`) && (
-                          <Link
-                            href={
-                              form.getValues(`projects.${index}.liveUrl`) || ""
-                            }
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-xs text-primary hover:underline"
-                          >
-                            Demo
-                          </Link>
-                        )}
-                      </div>
                     </div>
                   </div>
                 ) : (
-                  <div className="rounded-lg border border-border bg-background p-4 space-y-3">
+                  <div className="rounded-lg border border-border bg-background p-4 space-y-2">
                     <div className="flex items-center justify-between">
                       <h6>Edit Project</h6>
                       {FieldButtons(`projects.${index}`, () =>
@@ -1704,7 +1719,7 @@ function SocialsSection({
   } = useFieldArray({ control: form.control, name: "socials" });
   const getNewSocial = (): ClientCreateSocialType => ({ name: "", url: "" });
   return (
-    <div className="space-y-3">
+    <div className="space-y-2">
       <div className="flex items-center justify-between">
         <h3>Social Links</h3>
         <Button
@@ -1737,14 +1752,14 @@ function SocialsSection({
                   <div className="group relative rounded-lg border border-border bg-muted/20 p-3 transition-all hover:bg-muted/40 hover:border-border/80">
                     <div className="flex items-center justify-between">
                       <div className="flex-1 min-w-0">
-                        <h6>{form.getValues(`socials.${index}.name`)}</h6>
+                        <h6>{form.watch(`socials.${index}.name`)}</h6>
                         <Link
-                          href={form.getValues(`socials.${index}.url`) || ""}
+                          href={form.watch(`socials.${index}.url`) || ""}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="text-xs text-primary hover:underline truncate block"
                         >
-                          {form.getValues(`socials.${index}.url`)}
+                          {form.watch(`socials.${index}.url`)}
                         </Link>
                       </div>
                       <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -1754,7 +1769,7 @@ function SocialsSection({
                     </div>
                   </div>
                 ) : (
-                  <div className="rounded-lg border border-border bg-background p-4 space-y-3">
+                  <div className="rounded-lg border border-border bg-background p-4 space-y-2">
                     <div className="flex items-center justify-between">
                       <h6>Edit Social Link</h6>
                       <div className="flex gap-1">
@@ -1802,13 +1817,29 @@ function SocialsSection({
 export default function ProfileForm() {
   const { data: profile, CreateProfile } = useProfileQuery();
 
-  const defaultValues = profile
+  const defaultValues: ClientCreateProfileType = profile
     ? ProfileToClientCreateProfileSchema.parse(profile)
-    : undefined;
+    : {
+        projects: [],
+        workExperiences: [],
+        educations: [],
+        certifications: [],
+        awardOrHonors: [],
+        publications: [],
+        languages: [],
+        socials: [],
+        name: "",
+        headline: "",
+        location: "",
+        email: "",
+        mobile: "",
+        description: "",
+      };
 
   const form = useForm<ClientCreateProfileType>({
     resolver: zodResolver(ClientCreateProfileSchema),
     defaultValues,
+    mode: "onBlur",
   });
 
   const [editingField, setEditingField] = useState<string | null>(null);
@@ -1829,9 +1860,11 @@ export default function ProfileForm() {
     setEditingField(null);
   };
 
-  const handleSave = async (values: ClientCreateProfileType) => {
+  const handleSave = async () => {
     try {
-      await CreateProfile.mutateAsync(values);
+      const state = await form.trigger();
+      if (!state) return;
+      await CreateProfile.mutateAsync(form.getValues());
       setEditingField(null);
       setCreatingFields(new Set());
     } catch (err) {
@@ -1875,7 +1908,7 @@ export default function ProfileForm() {
             type="button"
             size="sm"
             className="h-7 w-7 p-0"
-            onClick={() => form.handleSubmit(handleSave)()}
+            onClick={handleSave}
             title="Save"
           >
             <CheckIcon className="h-3.5 w-3.5" />

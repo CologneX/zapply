@@ -1,11 +1,9 @@
 "use client";
 
 import { ResumeType } from "@/types/resume.types";
-import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Trash2, Eye, Edit2 } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
-import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 
 interface ResumeCardProps {
@@ -33,23 +31,13 @@ export function ResumeCard({
   };
 
   return (
-    <Card
-      className={cn(
-        "relative overflow-hidden min-w-[300px] h-auto w-full",
-        "bg-gradient-to-br from-chart-2/5 to-chart-2/10",
-        "border-chart-2/20 hover:border-chart-2/40",
-        "transition-all duration-300 hover:shadow-lg",
-        "group cursor-default"
-      )}
-    >
+    <div className="group relative rounded-lg border border-border bg-muted/20 p-3 transition-all hover:bg-muted/40 hover:border-border/80">
       {/* Content */}
-      <div className="flex flex-col gap-2 p-4 flex-1 overflow-hidden">
+      <div className="flex flex-col gap-2">
         {/* Header */}
         <div className="flex items-start justify-between gap-2">
           <div className="flex-1 min-w-0">
-            <h3 className="font-semibold text-sm text-foreground truncate">
-              {resume.jobTitle}
-            </h3>
+            <h6>{resume.jobTitle}</h6>
             <p className="text-xs text-muted-foreground truncate">
               {resume.companyName || "Job Optimization"}
             </p>
@@ -57,10 +45,7 @@ export function ResumeCard({
           {/* Match Score Badge */}
           {matchScore > 0 && (
             <Badge
-              className={cn(
-                "flex-shrink-0 text-xs font-semibold",
-                getMatchScoreColor(matchScore)
-              )}
+              className={`flex-shrink-0 text-xs font-semibold ${getMatchScoreColor(matchScore)}`}
             >
               {matchScore}%
             </Badge>
@@ -82,7 +67,7 @@ export function ResumeCard({
         )}
 
         {/* Footer */}
-        <div className="flex items-center justify-between gap-2 pt-2 border-t border-chart-2/10">
+        <div className="flex items-center justify-between gap-2 pt-2">
           <span className="text-xs text-muted-foreground">
             {formatDistanceToNow(new Date(resume.createdAt), {
               addSuffix: true,
@@ -90,34 +75,37 @@ export function ResumeCard({
           </span>
 
           {/* Action Buttons */}
-          <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+          <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
             <Button
               variant="ghost"
               size="sm"
               className="h-7 w-7 p-0"
               onClick={() => onView?.(resume._id)}
+              title="View"
             >
-              <Eye className="size-3.5" />
+              <Eye className="h-3.5 w-3.5" />
             </Button>
             <Button
               variant="ghost"
               size="sm"
               className="h-7 w-7 p-0"
               onClick={() => onEdit?.(resume._id)}
+              title="Edit"
             >
-              <Edit2 className="size-3.5" />
+              <Edit2 className="h-3.5 w-3.5" />
             </Button>
             <Button
               variant="ghost"
               size="sm"
-              className="h-7 w-7 p-0 hover:text-destructive"
+              className="h-7 w-7 p-0 text-destructive hover:text-destructive hover:bg-destructive/10"
               onClick={() => onDelete?.(resume._id)}
+              title="Delete"
             >
-              <Trash2 className="size-3.5" />
+              <Trash2 className="h-3.5 w-3.5" />
             </Button>
           </div>
         </div>
       </div>
-    </Card>
+    </div>
   );
 }

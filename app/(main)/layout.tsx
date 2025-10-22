@@ -1,7 +1,6 @@
-import { Header } from "@/components/common/header/header.component";
+import { Header } from "@/components/common/header";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
-import AccountSettingsDialogHandler from "@/components/common/account-settings/account-settings-dialog-handler";
 
 export default async function MainLayout({
   children,
@@ -12,9 +11,8 @@ export default async function MainLayout({
     headers: await headers(),
   });
   return (
-    <div className="relative w-full h-full">
+    <div className=" w-full h-full">
       <Header user={sessionData?.user || null} />
-      <AccountSettingsDialogHandler />
       <main className="h-[calc(100dvh-var(--header-height))]">{children}</main>
     </div>
   );

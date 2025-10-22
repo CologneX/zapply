@@ -221,7 +221,7 @@ export const ProjectSchema = z.object({
     // user_id: ObjectIdtoStringSchema,
     name: z.string().min(1, "Project needs a name — even secret labs have titles."),
     description: z.string().min(1, "Describe your project so mere mortals can understand it."),
-    shortDescription: z.string().min(1, "Short description is required — give us the elevator pitch!"),
+    shortDescription: z.string().optional(),
     technologies: z.array(z.string()).optional(),
     role: z.array(z.string()).optional(),
     repositoryUrl: z.string().optional(),
@@ -233,7 +233,7 @@ export const CreateProjectSchema = z.object({
     _id: z.custom<ObjectId>().default(() => new ObjectId()).optional(),
     name: z.string().min(1, "Project name please — even tiny experiments deserve a name."),
     description: z.string().min(1, "Tell us about your project — 1 character won't do it, though!"),
-    shortDescription: z.string().min(1, "Short description please — keep it snappy."),
+    shortDescription: z.string().optional(),
     technologies: z.array(z.string()).optional(),
     role: z.array(z.string()).optional(),
     repositoryUrl: z.string().optional(),
@@ -244,7 +244,7 @@ export const CreateProjectSchema = z.object({
 export const ClientCreateProjectSchema = z.object({
     name: z.string().min(1, "What's this project called? (1+ char is enough to start)"),
     description: z.string().min(1, "Add a description so humans and bots both understand it."),
-    shortDescription: z.string().min(1, "Short description needed — pitch it in one line!"),
+    shortDescription: z.string().optional(),
     technologies: z.array(z.string()).optional(),
     role: z.array(z.string()).optional(),
     repositoryUrl: z.string().optional(),
@@ -253,11 +253,11 @@ export const ClientCreateProjectSchema = z.object({
 })
 
 export const ProfileSchema = z.object({
-    // user_id: ObjectIdtoStringSchema,
-    name: z.string().optional(),
-    description: z.string().optional(),
-    headline: z.string().optional(),
-    email: z.email().optional(),
+    user_id: ObjectIdtoStringSchema,
+    name: z.string(),
+    description: z.string(),
+    headline: z.string(),
+    email: z.email(),
     location: z.string().optional(),
     mobile: z.e164().optional(),
     socials: z.array(SocialSchema).optional(),
@@ -270,15 +270,15 @@ export const ProfileSchema = z.object({
     publications: z.array(PublicationSchema).optional(),
     languages: z.array(LanguageSchema).optional(),
     projects: z.array(ProjectSchema).optional(),
-}).extend(BaseTimestamps.shape);
+}).extend(BaseTimestamps.shape).nullable();
 
 export const CreateProfileSchema = z.object({
     name: z.string(),
-    email: z.email(),
-    mobile: z.e164(),
     description: z.string(),
     headline: z.string(),
+    email: z.email(),
     location: z.string().optional(),
+    mobile: z.e164().optional(),
     socials: z.array(CreateSocialSchema).optional(),
     projects: z.array(CreateProjectSchema).optional(),
     workExperiences: z.array(CreateWorkExperienceSchema).optional(),
@@ -290,11 +290,15 @@ export const CreateProfileSchema = z.object({
 }).extend(BaseTimestamps.shape);
 
 export const ClientCreateProfileSchema = z.object({
-    name: z.string().optional(),
-    email: z.email().optional(),
-    mobile: z.e164().optional(),
-    description: z.string().optional(),
-    headline: z.string().optional(),
+    name: z.string().min(1, "Name is required — even heroes have names!"),
+    email: z.email({
+        message: "A valid email is required — we promise not to send you carrier pigeons!",
+    }).min(1, "Email is required — we need a way to send you carrier pigeons!"),
+    mobile: z.e164({
+        message: "Please provide a valid mobile number in E.164 format (e.g., +1234567890).",
+    }).or(z.literal("")),
+    description: z.string().min(1, "Description is required — tell us your story!"),
+    headline: z.string().min(1, "Headline is required — make it catchy!"),
     location: z.string().optional(),
     socials: z.array(ClientCreateSocialSchema).optional(),
     projects: z.array(ClientCreateProjectSchema).optional(),
@@ -333,68 +337,44 @@ export type ClientCreateProfileType = z.infer<typeof ClientCreateProfileSchema>;
 
 // Add a transformation schema that converts server types to client types
 export const ProfileToClientCreateProfileSchema = ProfileSchema.transform((profile) => ({
-    name: profile.name,
-    email: profile.email,
-    mobile: profile.mobile,
-    description: profile.description,
-    headline: profile.headline,
-    location: profile.location,
-    socials: profile.socials?.map((social) => ({
+    name: profile?.name,
+    email: profile?.email,
+    mobile: profile?.mobile,
+    description: profile?.description,
+    headline: profile?.headline,
+    location: profile?.location,
+    socials: profile?.socials?.map((social) => ({
         name: social.name,
         url: social.url,
     })),
-    workExperiences: profile.workExperiences?.map((exp) => ({
-        name: exp.name,
-        company: exp.company,
-        location: exp.location,
-        type: exp.type,
-        description: exp.description,
+    workExperiences: profile?.workExperiences?.map((exp) => ({
+        ...exp,
         startDate: new Date(exp.startDate),
         endDate: exp.endDate ? new Date(exp.endDate) : undefined,
-        isCurrent: exp.isCurrent,
     })),
-    educations: profile.educations?.map((edu) => ({
-        name: edu.name,
-        institution: edu.institution,
-        location: edu.location,
-        degree: edu.degree,
+    educations: profile?.educations?.map((edu) => ({
+        ...edu,
         startDate: new Date(edu.startDate),
         endDate: edu.endDate ? new Date(edu.endDate) : undefined,
-        isCurrent: edu.isCurrent,
     })),
-    certifications: profile.certifications?.map((cert) => ({
-        name: cert.name,
-        issuer: cert.issuer,
-        credentialId: cert.credentialId,
-        url: cert.url,
+    certifications: profile?.certifications?.map((cert) => ({
+        ...cert,
         startDate: new Date(cert.startDate),
         endDate: cert.endDate ? new Date(cert.endDate) : undefined,
     })),
-    awardOrHonors: profile.awardOrHonors?.map((award) => ({
-        name: award.name,
-        institution: award.institution,
-        description: award.description,
+    awardOrHonors: profile?.awardOrHonors?.map((award) => ({
+        ...award,
         date: new Date(award.date),
-        url: award.url,
     })),
-    publications: profile.publications?.map((pub) => ({
-        title: pub.title,
+    publications: profile?.publications?.map((pub) => ({
+        ...pub,
         date: new Date(pub.date),
-        url: pub.url,
     })),
-    languages: profile.languages?.map((lang) => ({
-        name: lang.name,
-        proficiency: lang.proficiency,
-        level: lang.level,
+    languages: profile?.languages?.map((lang) => ({
+        ...lang,
     })),
-    projects: profile.projects?.map((proj) => ({
-        name: proj.name,
-        description: proj.description,
-        shortDescription: proj.shortDescription,
-        technologies: proj.technologies,
-        role: proj.role,
-        repositoryUrl: proj.repositoryUrl,
-        liveUrl: proj.liveUrl,
+    projects: profile?.projects?.map((proj) => ({
+        ...proj,
         startedAt: new Date(proj.startedAt),
     })),
 })) as unknown as z.ZodType<ClientCreateProfileType>;

@@ -26,7 +26,9 @@ export default async function UserProfilePage({
     if (!user) {
       return (
         <ErrorPageWrapper>
-          <h2 className="text-center">Whoops, this profile doesn&apos;t exist</h2>
+          <h2 className="text-center">
+            Whoops, this profile doesn&apos;t exist
+          </h2>
         </ErrorPageWrapper>
       );
     }
@@ -41,7 +43,9 @@ export default async function UserProfilePage({
     if (!profile || !profile.success) {
       return (
         <ErrorPageWrapper>
-          <h2 className="text-center">Whoops, this profile doesn&apos;t exist</h2>
+          <h2 className="text-center">
+            Whoops, this profile doesn&apos;t exist
+          </h2>
         </ErrorPageWrapper>
       );
     }

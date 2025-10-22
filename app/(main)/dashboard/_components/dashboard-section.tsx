@@ -21,10 +21,10 @@ export function DashboardSection({
   emptyMessage = "No items yet. Create one to get started!",
 }: DashboardSectionProps) {
   return (
-    <section className="w-full">
+    <section className="w-full space-y-3">
       {/* Header with Search */}
-      <div className="flex items-center justify-between gap-4 mb-4">
-        <h2 className="text-2xl font-bold">{title}</h2>
+      <div className="flex items-center justify-between gap-4">
+        <h3>{title}</h3>
         <Input
           placeholder="Search..."
           value={searchValue}
@@ -35,8 +35,8 @@ export function DashboardSection({
 
       {/* Content or Empty State */}
       {isEmpty ? (
-        <div className="flex items-center justify-center rounded-lg border-2 border-dashed border-muted-foreground/30 py-12">
-          <p className="text-muted-foreground text-center">{emptyMessage}</p>
+        <div className="flex items-center justify-center rounded-lg border border-border bg-muted/20 p-12">
+          <p className="text-muted-foreground text-center text-sm">{emptyMessage}</p>
         </div>
       ) : (
         <div className="relative">{children}</div>
