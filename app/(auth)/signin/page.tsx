@@ -1,4 +1,3 @@
-import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -57,7 +56,7 @@ export default function SignInPage() {
 
         {/* Sign Up Link */}
         <p className="text-center text-sm text-muted-foreground">
-          Don't have an account?{" "}
+          Don&apos;t have an account?{" "}
           <Link href={RouteURL.SIGNUP} className="link">
             Sign up here
           </Link>
