@@ -11,9 +11,11 @@ export default async function MainLayout({
     headers: await headers(),
   });
   return (
-    <div className=" w-full h-full">
+    <div className="w-full h-full">
       <Header user={sessionData?.user || null} />
-      <main className="h-[calc(100dvh-var(--header-height))]">{children}</main>
+      <main className="min-h-[calc(100dvh-var(--header-height))]">
+        {children}
+      </main>
     </div>
   );
 }
