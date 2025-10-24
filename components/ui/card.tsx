@@ -20,7 +20,7 @@ function CardHeader({ className, ...props }: React.ComponentProps<"div">) {
     <div
       data-slot="card-header"
       className={cn(
-        "@container/card-header grid auto-rows-min grid-rows-[auto_auto] items-start gap-2 px-6 pt-6 has-data-[slot=card-action]:grid-cols-[1fr_auto] [.border-b]:pb-6 flex-shrink-0",
+        "@container/card-header grid auto-rows-min grid-rows-[auto_auto] items-start gap-2 p-4 has-data-[slot=card-action]:grid-cols-[1fr_auto] [.border-b]:pb-4 shrink-0",
         className
       )}
       {...props}
@@ -65,7 +65,7 @@ function CardContent({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="card-content"
-      className={cn("px-6 py-6 overflow-y-auto flex-grow", className)}
+      className={cn("px-4 py-4 overflow-y-auto grow", className)}
       {...props}
     />
   );
@@ -76,7 +76,7 @@ function CardFooter({ className, ...props }: React.ComponentProps<"div">) {
     <div
       data-slot="card-footer"
       className={cn(
-        "flex items-center px-6 py-6 border-t sticky bottom-0 bg-card shadow-xl flex-shrink-0",
+        "flex items-center p-2 border-t sticky bottom-0 bg-card shadow-xl shrink-0",
         className
       )}
       {...props}

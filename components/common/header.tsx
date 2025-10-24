@@ -57,7 +57,7 @@ export function Header({ user }: { user: User | null }) {
           {user && (
             <>
               <Button
-                variant="secondary"
+                variant="ghost"
                 onClick={handleOpenSettings}
                 className="bg-transparent shadow-none"
               >

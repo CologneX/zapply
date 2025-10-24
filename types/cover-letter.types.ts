@@ -1,5 +1,5 @@
 import z from "zod";
-import { BaseTimestamps, ObjectIdtoStringSchema } from "./helper.types";
+import { ClientBaseTimestamps, ObjectIdtoStringSchema } from "./helper.types";
 
 export const CoverLetterSchema = z.object({
     _id: ObjectIdtoStringSchema,
@@ -15,7 +15,7 @@ export const CoverLetterSchema = z.object({
 
     // Generated content
     content: z.string(),
-}).extend(BaseTimestamps.shape);
+}).extend(ClientBaseTimestamps.shape);
 
 export const CreateCoverLetterSchema = z.object({
     jobTitle: z.string().min(1, "Job title is required"),

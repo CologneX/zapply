@@ -68,6 +68,10 @@ export function transformProfileDates(profile: ProfileType) {
       ...pub,
       date: new Date(pub.date),
     })),
+    projects: profile?.projects?.map((proj) => ({
+      ...proj,
+      startedAt: new Date(proj.startedAt),
+    })),
   };
 }
 
