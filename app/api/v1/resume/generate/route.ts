@@ -5,13 +5,13 @@ import { headers } from "next/headers";
 import { db } from "@/lib/db";
 import { geminiClient } from "@/lib/gen-ai";
 import { ObjectId } from "mongodb";
-import { GeneratedResumeSuggestionSchema, ResumeSuggestionsStructuredSchema } from "@/types/resume.types";
+import { GeneratedResumeSuggestionReturnSchema, GenerateResumeRequestSchema, ResumeSuggestionsGeminiSchema, } from "@/types/resume.types";
 
 export async function POST(request: Request) {
     try {
         // 1. Parse input
         const body = await request.json();
-        const validatedInput = GeneratedResumeSuggestionSchema.safeParse(body);
+        const validatedInput = GenerateResumeRequestSchema.safeParse(body);
 
         if (!validatedInput.success) {
             return Response.json(
@@ -32,6 +32,7 @@ export async function POST(request: Request) {
         const profile = await db.collection("profiles").findOne({
             user_id: new ObjectId(session.user.id),
         });
+
 
         if (!profile) {
             return Response.json(
@@ -61,9 +62,9 @@ export async function POST(request: Request) {
             "id": "unique-id",
             "fieldPath": "headline" or "workExperiences.0.description",
             "originalValue": "current value",
-            "suggestedValue": "improved value",
+            "suggestedValue": "improved value,",
             "explanation": "why this change helps",
-            "confidence": 0.0-1.0
+
             }
         ],
         "matchScore": 85,
@@ -72,18 +73,19 @@ export async function POST(request: Request) {
         }
         `
         const prompt = JSON.stringify({
-            profile,
+            profile: profile,
             job_title: validatedInput.data.jobTitle,
             company_name: validatedInput.data.companyName,
             job_description: validatedInput.data.jobDescription,
         });
 
         const result = await geminiClient.models.generateContent({
-            model: "gemini-2.5-flash",
+            model: "gemini-2.5-flash-lite",
             contents: prompt,
             config: {
                 temperature: 0.3,
                 responseMimeType: "application/json",
+                responseJsonSchema: ResumeSuggestionsGeminiSchema,
                 thinkingConfig: {
                     thinkingBudget: 0,
                 },
@@ -100,10 +102,11 @@ export async function POST(request: Request) {
 
         const finalizedOutput = {
             ...JSON.parse(result.text),
-            profile,
+            profile: profile,
         }
+        console.log("Generated Resume Suggestions:", finalizedOutput);
         // 4. Validate AI output
-        const aiOutput = ResumeSuggestionsStructuredSchema.safeParse(
+        const aiOutput = GeneratedResumeSuggestionReturnSchema.safeParse(
             finalizedOutput
         );
 
@@ -115,7 +118,7 @@ export async function POST(request: Request) {
             );
         }
         return Response.json({
-            profile: aiOutput.data.profile,
+            profile: profile,
             suggestions: aiOutput.data.suggestions,
             matchScore: aiOutput.data.matchScore,
             keywordsMatched: aiOutput.data.keywordsMatched,

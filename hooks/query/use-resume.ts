@@ -1,7 +1,7 @@
 "use client";
 
 import { useMutation } from "@tanstack/react-query";
-import { ClientCreateResumeType, GeneratedResumeSuggestionType, ResumeSuggestionsStructuredSchema, ResumeSuggestionsStructuredType } from "@/types/resume.types";
+import { ClientCreateResumeType, GeneratedResumeSuggestionReturnSchema, GeneratedResumeSuggestionReturnType, GenerateResumeRequestType } from "@/types/resume.types";
 import { toast } from "sonner";
 import { ActionErrorWrapper, transformProfileDates } from "@/lib/utils";
 import { CreateResumeAction } from "@/services/resume.service";
@@ -44,7 +44,7 @@ export const useResumeQuery = () => {
     // })
 
     const GenerateResume = useMutation({
-        mutationFn: async (data: GeneratedResumeSuggestionType): Promise<ResumeSuggestionsStructuredType> => {
+        mutationFn: async (data: GenerateResumeRequestType): Promise<GeneratedResumeSuggestionReturnType> => {
             const response = await fetch("/api/v1/resume/generate", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -55,17 +55,28 @@ export const useResumeQuery = () => {
                 throw new Error(resJson.error || "Failed to generate resume suggestions");
             }
 
-            console.log("Resume generation response:", resJson);
-            const transformed = transformProfileDates(resJson.profile);
-            const generated = ResumeSuggestionsStructuredSchema.safeParse({
+            // const transformed = transformProfileDates(resJson.profile);
+
+            // const generated = {
+            //     ...resJson,
+            //     profile: transformed,
+            // }
+            // // if (!generated.success) {
+            // //     console.error("Resume generation response validation error:", generated.error);
+            // //     throw new Error("Invalid response format from server");
+            // // }
+            const dataProfile = transformProfileDates(resJson.profile);
+            const returnData = GeneratedResumeSuggestionReturnSchema.safeParse({
                 ...resJson,
-                profile: transformed,
+                profile: dataProfile,
             });
-            if (!generated.success) {
-                console.error("Resume generation response validation error:", generated.error);
+
+            if (!returnData.success) {
+                console.error("Resume generation response validation error:", returnData.error);
                 throw new Error("Invalid response format from server");
             }
-            return generated.data;
+
+            return returnData.data;
         },
     })
     return {

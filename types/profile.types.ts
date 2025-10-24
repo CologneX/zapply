@@ -1,4 +1,4 @@
-import { BaseTimestamps, ObjectIdtoStringSchema, DateToStringSchema } from "./helper.types";
+import { ServerBaseTimestamps, ObjectIdtoStringSchema, DateToStringSchema } from "./helper.types";
 import { z } from "zod";
 import { ObjectId } from "bson";
 
@@ -270,7 +270,7 @@ export const ProfileSchema = z.object({
     publications: z.array(PublicationSchema).optional(),
     languages: z.array(LanguageSchema).optional(),
     projects: z.array(ProjectSchema).optional(),
-}).extend(BaseTimestamps.shape).nullable();
+}).extend(ServerBaseTimestamps.shape).nullable();
 
 export const CreateProfileSchema = z.object({
     name: z.string(),
@@ -287,7 +287,7 @@ export const CreateProfileSchema = z.object({
     awardOrHonors: z.array(CreateAwardOrHonorSchema).optional(),
     publications: z.array(CreatePublicationSchema).optional(),
     languages: z.array(CreateLanguageSchema).optional(),
-}).extend(BaseTimestamps.shape);
+}).extend(ServerBaseTimestamps.shape);
 
 export const ClientCreateProfileSchema = z.object({
     name: z.string().min(1, "Name is required — even heroes have names!"),
@@ -332,8 +332,6 @@ export type ClientCreatePublicationType = z.infer<typeof ClientCreatePublication
 export type ClientCreateLanguageType = z.infer<typeof ClientCreateLanguageSchema>;
 export type ClientCreateProjectType = z.infer<typeof ClientCreateProjectSchema>;
 export type ClientCreateProfileType = z.infer<typeof ClientCreateProfileSchema>;
-
-// ...existing schemas...
 
 // Add a transformation schema that converts server types to client types
 export const ProfileToClientCreateProfileSchema = ProfileSchema.transform((profile) => ({

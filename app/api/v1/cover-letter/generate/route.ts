@@ -51,7 +51,7 @@ export async function POST(request: Request) {
 
         // Generate cover letter content using AI with streaming
         const response = await geminiClient.models.generateContentStream({
-            model: "gemini-2.5-flash",
+            model: "gemini-2.5-flash-lite",
             contents: JSON.stringify({
                 profile,
                 jobTitle: validatedFields.data.jobTitle,

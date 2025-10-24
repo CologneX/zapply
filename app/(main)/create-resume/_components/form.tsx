@@ -5,127 +5,132 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { AppForm, AppFormField } from "@/components/common/form";
 import { Button } from "@/components/ui/button";
 import { useResumeQuery } from "@/hooks/query/use-resume";
-import {
-  ClientCreateResumeSchema,
-  ClientCreateResumeType,
-  SuggestionOpType,
-} from "@/types/resume.types";
 import { FormField } from "@/components/ui/form";
 import RichTextEditor from "@/components/ui/rich-text-editor";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent } from "@/components/ui/card";
-import { ProgressRadial } from "@/components/ui/progress";
-import { CountingNumber } from "@/components/ui/counting-number";
-import { Separator } from "@/components/ui/separator";
-import { Badge } from "@/components/ui/badge";
 import { motion } from "motion/react";
-import { ProfilePreview } from "./profile-preview";
-import { SuggestionsList } from "./suggestions-list";
-import { useMemo, useState } from "react";
-import { ArrowLeftIcon } from "lucide-react";
+import { useState } from "react";
+import ResumeProfileSections from "./sections";
+import {
+  ClientCreateResumeSchema,
+  ClientCreateResumeType,
+  GenerateResumeRequestSchema,
+  GenerateResumeRequestType,
+} from "@/types/resume.types";
 
 export default function ResumeTailorPage() {
-  const form = useForm<ClientCreateResumeType>({
-    resolver: zodResolver(ClientCreateResumeSchema),
+  const [isEnterGeneral, setIsEnterGeneral] = useState<boolean>(true);
+
+  const generateForm = useForm<GenerateResumeRequestType>({
+    resolver: zodResolver(GenerateResumeRequestSchema),
     defaultValues: {
-      jobDescription: "",
-      jobTitle: "",
-      appliedSuggestions: [],
-      keywordsMatched: [],
-      keywordsMissing: [],
-      matchScore: undefined,
+      jobDescription: `About the job
+Are you passionate about building great products? Do you want to redefine the way travellers explore the world? Keen to be part of this growth journey with a bunch of amazing people? Then Pelago is the place for you!
+
+We are looking for ambitious and motivated talents who are excited about staying on the cutting edge of Technology and always keen on innovating new ways to drive growth and taking our startup to new heights.
+
+WHO ARE WE? 
+
+Pelago is a travel experiences platform created by Singapore Airlines Group. Think of us as a travel magazine that you can book - highly curated, visually inspiring, with the trust and quality of Singapore Airlines. We connect you with global, local cultures and ideas so you can expand your life.
+
+We are a team of diverse, passionate, empowered, inclusive, authentic and open individuals who share the same values and strive towards a common goal!
+
+WHAT CAN WE OFFER YOU? 
+
+ A unique opportunity to take end-to-end ownership of your workstream to deliver real value to users.
+ Platforms to solve real user problems concerning travel planning & booking with innovative products/services.
+ An amazing peer group to work with, and the ability to learn from the similarly great minds around you.
+ An opportunity to be an integral part of shaping the company’s growth and culture with a diverse, fun, and dynamic environment with teammates from different parts of the world.
+ Competitive compensation and benefits - including work flexibility, insurance, remote working and more!
+
+WHAT WILL YOU BE DOING?
+
+ Develop performant, accessible, and responsive frontend applications using modern web technologies.
+ Collaborate with product managers, designers, and backend engineers to deliver user-centric solutions.
+ Drive the architecture and design of frontend systems using best practices and scalable patterns.
+ Write clean, maintainable, and well-tested code using TypeScript, React.js , and Next.js .
+ Ensure the frontend stack meets high standards of usability, performance, security, and scalability.
+ Embrace agile methodologies, contribute to sprint planning, retrospectives, and code reviews.
+ Stay current with emerging technologies and advocate for their adoption where appropriate.
+ Champion frontend excellence across engineering, including design systems and component libraries.
+ Contribute to team knowledge sharing through discussions, code reviews, and mentoring.
+
+WHAT EXPERTISE ARE MUST HAVES?
+
+ 3-5 years of experience building production-grade frontend applications with React.js , Next.js and TypeScript.
+ Deep familiarity with Next.js and modern frontend architecture for server-side rendering and static site generation.
+ Solid understanding of Core Web Vitals and performance metrics like LCP, FID, CLS, TTFB and how they affect user experience and SEO
+ Strong experience with CSS and preprocessors (e.g., SASS/SCSS).
+ Experience integrating with APIs, including REST and ideally GraphQL (Apollo or similar).
+ Solid understanding of accessibility, performance optimization, and responsive design.
+ Proficiency with tools and processes such as Git, CI/CD pipelines, unit/integration testing, and code reviews.
+ Strong collaboration skills and the ability to work cross-functionally in a remote setup.
+ Excellent communication skills—able to explain ideas and decisions clearly to various stakeholders.
+
+WHAT EXPERTISE ARE GOOD TO HAVE?
+
+ Experience with frontend observability tools (e.g., Sentry, LogRocket, etc.)
+ Experience working on travel platforms or B2C consumer products
+ Contributions to design systems or frontend infrastructure
+ Familiarity with headless CMS integrations or e-commerce platforms
+
+OUR TECH STACK (WEB)
+
+Languages / Frameworks: Next.js , TypeScript, React.js , Apollo GraphQL, SASS (or similar), Node.js (for SSR/edge logic)
+
+Other Tools: Jest, React Testing Library, GitHub Actions, Storybook, Vercel, Figma, Sentry
+`,
+      jobTitle: "Remote Frontend Engineer",
+      companyName: "Pelago",
     },
   });
 
-  const [isEnterGeneral, setIsEnterGeneral] = useState<boolean>(true);
-
-  const [availableSuggestions, setAvailableSuggestions] = useState<
-    SuggestionOpType[]
-  >([]);
-
-  const formValues = form.watch();
+  const createResumeForm = useForm<ClientCreateResumeType>({
+    resolver: zodResolver(ClientCreateResumeSchema),
+    defaultValues: {
+      appliedSuggestions: [],
+      matchScore: undefined,
+      keywordsMatched: [],
+      keywordsMissing: [],
+      profile: {},
+    },
+  });
 
   const { GenerateResume, CreateResume } = useResumeQuery();
 
-  const effectiveProfile = useMemo(() => {
-    const profile = { ...formValues };
-    if (
-      formValues.appliedSuggestions &&
-      formValues.appliedSuggestions.length > 0
-    ) {
-      formValues.appliedSuggestions.forEach((suggestion) => {
-        const paths = suggestion.fieldPath.split(".");
-        let current: Record<string, unknown> = profile;
-
-        // Navigate to the parent object
-        for (let i = 0; i < paths.length - 1; i++) {
-          const path = paths[i];
-          const numPath = Number(path);
-
-          if (!isNaN(numPath) && Array.isArray(current)) {
-            current = current[numPath] as Record<string, unknown>;
-          } else {
-            if (!current[path]) {
-              current[path] = {};
-            }
-            current = current[path] as Record<string, unknown>;
-          }
-        }
-
-        const lastPath = paths[paths.length - 1];
-        current[lastPath] = suggestion.suggestedValue;
-      });
-    }
-
-    return profile;
-  }, [formValues]);
-
   const handleGenerate = async () => {
     try {
-      const result = await GenerateResume.mutateAsync(form.getValues());
-      setAvailableSuggestions(result.suggestions || []);
-
-      form.reset({
-        ...form.getValues(),
+      const result = await GenerateResume.mutateAsync(generateForm.getValues());
+      console.log("Generated resume suggestions:", result.profile.projects);
+      createResumeForm.reset({
+        profile: result.profile,
+        appliedSuggestions: [],
+        suggestions: result.suggestions,
         matchScore: result.matchScore,
         keywordsMatched: result.keywordsMatched,
         keywordsMissing: result.keywordsMissing,
+        jobTitle: generateForm.getValues().jobTitle,
+        jobDescription: generateForm.getValues().jobDescription,
+        companyName: generateForm.getValues().companyName,
       });
-
       setIsEnterGeneral(false);
     } catch (error) {
       console.error("Error generating resume suggestions:", error);
       const err = error as Error;
-      form.setError("root", {
+      generateForm.setError("root", {
         type: "manual",
         message: err?.message || "Failed to generate suggestions",
       });
     }
   };
 
-  const handleApplySuggestion = (suggestion: SuggestionOpType) => {
-    const currentApplied = formValues.appliedSuggestions || [];
-    if (currentApplied.some((s) => s.id === suggestion.id)) {
-      return;
-    }
-    form.setValue("appliedSuggestions", [...currentApplied, suggestion]);
-  };
-
-  const handleUndoSuggestion = (suggestionId: string) => {
-    const currentApplied = formValues.appliedSuggestions || [];
-    form.setValue(
-      "appliedSuggestions",
-      currentApplied.filter((s) => s.id !== suggestionId)
-    );
-  };
-
   const handleSaveResume = async () => {
     try {
-      await CreateResume.mutateAsync(form.getValues());
+      await CreateResume.mutateAsync(createResumeForm.getValues());
     } catch (error) {
       console.error("Error saving resume:", error);
       const err = error as Error;
-      form.setError("root", {
+      generateForm.setError("root", {
         type: "manual",
         message: err?.message || "Failed to save resume",
       });
@@ -133,21 +138,23 @@ export default function ResumeTailorPage() {
   };
 
   return (
-    <div className="flex flex-row gap-4">
+    <>
       <AppForm
-        form={form}
-        onSubmit={form.handleSubmit(handleGenerate)}
-        error={form.formState.errors.root?.message}
+        form={generateForm}
+        onSubmit={generateForm.handleSubmit(handleGenerate)}
+        error={generateForm.formState.errors.root?.message}
       >
-        {/* Left Column: Input Form */}
         {isEnterGeneral && (
           <motion.section
-            transition={{ duration: 0.4, ease: "easeInOut" }}
-            exit={{ opacity: 0, scale: 0.95 }}
-            className="lg:col-span-1 space-y-4"
+            id="general-info"
+            className="space-y-4"
+            initial={{ x: -400 }}
+            animate={{ x: 0 }}
+            exit={{ x: -400 }}
+            transition={{ duration: 0.3, ease: "easeInOut" }}
           >
             <FormField
-              control={form.control}
+              control={generateForm.control}
               name="jobTitle"
               render={({ field }) => (
                 <AppFormField
@@ -159,7 +166,7 @@ export default function ResumeTailorPage() {
               )}
             />
             <FormField
-              control={form.control}
+              control={generateForm.control}
               name="jobDescription"
               render={({ field }) => (
                 <AppFormField
@@ -185,140 +192,24 @@ export default function ResumeTailorPage() {
         )}
       </AppForm>
 
-      {/* Middle Column: Profile Preview */}
-      {!isEnterGeneral && (
-        <motion.div className="space-y-2">
-          <Button
-            type="button"
-            onClick={() => setIsEnterGeneral(true)}
-            variant="link"
+      <AppForm
+        form={createResumeForm}
+        onSubmit={createResumeForm.handleSubmit(handleSaveResume)}
+        error={createResumeForm.formState.errors.root?.message}
+      >
+        {!isEnterGeneral && (
+          <motion.section
+            id="profile-sections"
+            className="space-y-6"
+            initial={{ x: 400 }}
+            animate={{ x: 0 }}
+            exit={{ x: 400 }}
+            transition={{ duration: 0.3, ease: "easeInOut" }}
           >
-            <ArrowLeftIcon />
-            Go back
-          </Button>
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.4, ease: "easeInOut" }}
-            className="lg:col-span-1"
-          >
-            <ProfilePreview profile={effectiveProfile} />
-          </motion.div>
-
-          <Button
-            type="button"
-            loading={CreateResume.isPending}
-            className="w-full"
-            onClick={handleSaveResume}
-          >
-            Save Resume
-          </Button>
-        </motion.div>
-      )}
-
-      {/* Right Column: Suggestions & Metrics */}
-      {!isEnterGeneral && (
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.4, ease: "easeInOut" }}
-          className="lg:col-span-1 space-y-4"
-        >
-          {/* Match Score Card */}
-          <Card>
-            <CardContent className="pt-6 flex flex-col items-center gap-4">
-              <ProgressRadial
-                value={formValues.matchScore || 0}
-                size={120}
-                startAngle={-180}
-                endAngle={0}
-                strokeWidth={10}
-                indicatorClassName="text-primary"
-                className="text-primary"
-              >
-                <div className="text-center">
-                  <CountingNumber
-                    from={0}
-                    to={formValues.matchScore || 0}
-                    duration={3}
-                    className="text-2xl font-bold"
-                  />
-                  <div className="text-xs text-muted-foreground">Score</div>
-                </div>
-              </ProgressRadial>
-
-              {/* Keywords */}
-              <Separator className="w-full" />
-
-              {/* Matched Keywords */}
-              {formValues.keywordsMatched &&
-                formValues.keywordsMatched.length > 0 && (
-                  <div className="w-full">
-                    <p className="text-xs font-semibold text-muted-foreground mb-2">
-                      Matched Keywords
-                    </p>
-                    <div className="flex flex-wrap gap-1">
-                      {formValues.keywordsMatched
-                        .slice(0, 5)
-                        .map((keyword, idx) => (
-                          <Badge
-                            key={idx}
-                            className="text-xs p-1 bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
-                            variant="secondary"
-                          >
-                            {keyword}
-                          </Badge>
-                        ))}
-                      {formValues.keywordsMatched.length > 5 && (
-                        <Badge variant="secondary" className="text-xs p-1">
-                          +{formValues.keywordsMatched.length - 5}
-                        </Badge>
-                      )}
-                    </div>
-                  </div>
-                )}
-
-              {/* Missing Keywords */}
-              {formValues.keywordsMissing &&
-                formValues.keywordsMissing.length > 0 && (
-                  <div className="w-full">
-                    <p className="text-xs font-semibold text-muted-foreground mb-2">
-                      Missing Keywords
-                    </p>
-                    <div className="flex flex-wrap gap-1">
-                      {formValues.keywordsMissing
-                        .slice(0, 5)
-                        .map((keyword, idx) => (
-                          <Badge
-                            key={idx}
-                            className="text-xs p-1 bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200"
-                            variant="secondary"
-                          >
-                            {keyword}
-                          </Badge>
-                        ))}
-                      {formValues.keywordsMissing.length > 5 && (
-                        <Badge variant="secondary" className="text-xs p-1">
-                          +{formValues.keywordsMissing.length - 5}
-                        </Badge>
-                      )}
-                    </div>
-                  </div>
-                )}
-            </CardContent>
-          </Card>
-
-          {/* Suggestions List */}
-          {formValues.matchScore && (
-            <SuggestionsList
-              suggestions={availableSuggestions}
-              appliedSuggestions={formValues.appliedSuggestions || []}
-              onApply={handleApplySuggestion}
-              onUndo={handleUndoSuggestion}
-            />
-          )}
-        </motion.div>
-      )}
-    </div>
+            <ResumeProfileSections form={createResumeForm} />
+          </motion.section>
+        )}
+      </AppForm>
+    </>
   );
 }
