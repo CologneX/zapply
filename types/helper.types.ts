@@ -23,7 +23,7 @@ export const ClientBaseTimestamps = z.object({
 });
 
 export const ServerBaseTimestamps = z.object({
-  createdAt: z.date(),
-  updatedAt: z.date(),
+  createdAt: z.date().default(() => new Date()),
+  updatedAt: z.date().default(() => new Date()),
   deletedAt: z.date().nullable().optional(),
 });

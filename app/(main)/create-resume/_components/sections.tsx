@@ -56,7 +56,6 @@ import {
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { ProgressRadial } from "@/components/ui/progress";
-import { Popover } from "@/components/ui/popover";
 import {
   Tooltip,
   TooltipContent,
@@ -2133,7 +2132,10 @@ export default function ResumeProfileSections({
    * Normalizes array field values that may come as strings from AI suggestions
    * Converts strings to arrays for fields like technologies, role, skills, etc.
    */
-  const normalizeArrayField = (fieldPath: string, value: any): any => {
+  const normalizeArrayField = (
+    fieldPath: string,
+    value: unknown
+  ): string | string[] => {
     // Array fields that should always be arrays
     const arrayFields = [
       "technologies",
@@ -2146,7 +2148,7 @@ export default function ResumeProfileSections({
     const isArrayField = arrayFields.some((field) => fieldPath.endsWith(field));
 
     if (!isArrayField) {
-      return value;
+      return value as string;
     }
 
     // If it's already an array, return as-is
@@ -2185,10 +2187,8 @@ export default function ResumeProfileSections({
       );
 
       // Update the form field with the suggested value
-      form.setValue(
-        `profile.${suggestion.fieldPath}` as any,
-        normalizedValue
-      );
+      /* eslint-disable  @typescript-eslint/no-explicit-any */
+      form.setValue(`profile.${suggestion.fieldPath}` as any, normalizedValue);
 
       // Track this suggestion as applied
       appendAppliedSuggestion({
@@ -2222,7 +2222,7 @@ export default function ResumeProfileSections({
         suggestion.fieldPath,
         suggestion.originalValue
       );
-
+      /* eslint-disable  @typescript-eslint/no-explicit-any */
       form.setValue(
         `profile.${suggestion.fieldPath}` as any,
         normalizedOriginal
@@ -2258,7 +2258,7 @@ export default function ResumeProfileSections({
     // Revert all form values in reverse order
     for (let i = appliedSuggestionFields.length - 1; i >= 0; i--) {
       const applied = appliedSuggestionFields[i];
-      
+
       // Revert the form field to original value if it exists
       if (
         applied.originalValue !== null &&
@@ -2269,7 +2269,7 @@ export default function ResumeProfileSections({
           applied.fieldPath,
           applied.originalValue
         );
-
+        /* eslint-disable  @typescript-eslint/no-explicit-any */
         form.setValue(
           `profile.${applied.fieldPath}` as any,
           normalizedOriginal
@@ -2328,7 +2328,12 @@ export default function ResumeProfileSections({
                     <CardFooter className="gap-2 flex justify-between items-center">
                       <Tooltip>
                         <TooltipTrigger asChild>
-                          <Button size="sm" variant="link" className="mr-auto" type="button">
+                          <Button
+                            size="sm"
+                            variant="link"
+                            className="mr-auto"
+                            type="button"
+                          >
                             <InfoIcon />
                             Explanation
                           </Button>

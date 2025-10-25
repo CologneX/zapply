@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { ClientCreateProfileSchema } from "./profile.types";
 import { ClientBaseTimestamps, ObjectIdtoStringSchema } from "./helper.types";
+import { ObjectId } from "mongodb";
 
 
 export const SuggestionItemSchema = z.object({
@@ -36,14 +37,16 @@ export const ResumeSchema = z.object({
     // AI generation tracking
     appliedSuggestions: z.array(SuggestionItemSchema).optional(),
     profile: ClientCreateProfileSchema
-}).extend(ClientBaseTimestamps.shape).extend(GenerateResumeRequestSchema.shape);
+}).extend(ClientBaseTimestamps.shape).extend(GenerateResumeRequestSchema.shape).extend(ResumeSuggestionSchema.shape);
 
 
 export const CreateResumeSchema = z.object({
+    _id: z.custom<ObjectId>(),
+    user_id: z.custom<ObjectId>(),
     // AI generation tracking
     appliedSuggestions: z.array(SuggestionItemSchema).optional(),
     profile: ClientCreateProfileSchema
-}).extend(GenerateResumeRequestSchema.shape).extend(ClientBaseTimestamps.shape)
+}).extend(GenerateResumeRequestSchema.shape).extend(ClientBaseTimestamps.shape).extend(ResumeSuggestionSchema.shape);
 
 export const ClientCreateResumeSchema = z.object({
     // AI generation tracking

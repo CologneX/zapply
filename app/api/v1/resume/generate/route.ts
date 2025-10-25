@@ -14,10 +14,7 @@ export async function POST(request: Request) {
         const validatedInput = GenerateResumeRequestSchema.safeParse(body);
 
         if (!validatedInput.success) {
-            return Response.json(
-                { error: "Invalid input", details: validatedInput.error.issues },
-                { status: 400 }
-            );
+            return new Response("Invalid input", { status: 400 });
         }
 
         // 2. Get session & user profile
@@ -26,7 +23,7 @@ export async function POST(request: Request) {
         });
 
         if (!session?.user?.id) {
-            return Response.json({ error: "Unauthorized" }, { status: 401 });
+            return new Response("Unauthorized", { status: 401 });
         }
 
         const profile = await db.collection("profiles").findOne({
@@ -35,10 +32,7 @@ export async function POST(request: Request) {
 
 
         if (!profile) {
-            return Response.json(
-                { error: "Profile not found. Please create a profile first." },
-                { status: 404 }
-            );
+            return new Response("Profile not found. Please create a profile first.", { status: 404 });
         }
 
         // 3. Generate AI suggestions with Gemini
@@ -94,17 +88,13 @@ export async function POST(request: Request) {
         })
         if (!result.text) {
             console.error("Gemini API error");
-            return Response.json(
-                { error: "Failed to generate resume suggestions" },
-                { status: 500 }
-            );
+            return new Response("Failed to generate resume suggestions", { status: 500 });
         }
 
         const finalizedOutput = {
             ...JSON.parse(result.text),
             profile: profile,
         }
-        console.log("Generated Resume Suggestions:", finalizedOutput);
         // 4. Validate AI output
         const aiOutput = GeneratedResumeSuggestionReturnSchema.safeParse(
             finalizedOutput
@@ -112,10 +102,7 @@ export async function POST(request: Request) {
 
         if (!aiOutput.success) {
             console.error("AI output validation failed:", aiOutput.error);
-            return Response.json(
-                { error: "AI generated invalid response" },
-                { status: 500 }
-            );
+            return new Response("AI generated invalid response", { status: 500 });
         }
         return Response.json({
             profile: profile,
@@ -127,9 +114,6 @@ export async function POST(request: Request) {
 
     } catch (error) {
         console.error("Resume generation error:", error);
-        return Response.json(
-            { error: "Failed to generate resume suggestions" },
-            { status: 500 }
-        );
+        return new Response("Failed to generate resume suggestions", { status: 500 });
     }
 }

@@ -24,7 +24,7 @@ export default function ResumeTailorPage() {
   const generateForm = useForm<GenerateResumeRequestType>({
     resolver: zodResolver(GenerateResumeRequestSchema),
     defaultValues: {
-      jobDescription: `About the job
+      jobDescription: `About the job. 
 Are you passionate about building great products? Do you want to redefine the way travellers explore the world? Keen to be part of this growth journey with a bunch of amazing people? Then Pelago is the place for you!
 
 We are looking for ambitious and motivated talents who are excited about staying on the cutting edge of Technology and always keen on innovating new ways to drive growth and taking our startup to new heights.
@@ -97,11 +97,9 @@ Other Tools: Jest, React Testing Library, GitHub Actions, Storybook, Vercel, Fig
   });
 
   const { GenerateResume, CreateResume } = useResumeQuery();
-
   const handleGenerate = async () => {
     try {
       const result = await GenerateResume.mutateAsync(generateForm.getValues());
-      console.log("Generated resume suggestions:", result.profile.projects);
       createResumeForm.reset({
         profile: result.profile,
         appliedSuggestions: [],
@@ -162,6 +160,18 @@ Other Tools: Jest, React Testing Library, GitHub Actions, Storybook, Vercel, Fig
                   description="The title of the job you are applying for."
                 >
                   <Input {...field} />
+                </AppFormField>
+              )}
+            />
+            <FormField
+              control={generateForm.control}
+              name="companyName"
+              render={({ field }) => (
+                <AppFormField
+                  label="Company Name"
+                  description="The name of the company you are applying to."
+                >
+                  <Input {...field} placeholder="Optional" />
                 </AppFormField>
               )}
             />

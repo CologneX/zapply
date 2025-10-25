@@ -12,19 +12,19 @@ export async function GET() {
             return new Response("Unauthorized", { status: 401 });
         }
 
-        const rawresume = db.collection("resumes").find({
+        const rawresume = await db.collection("resumes").find({
             user_id: session.user.id,
-            deletedAt: { $exists: false },
-        });
+            deletedAt: null,
+        }).toArray()
         if (!rawresume) {
             return new Response("Resume not found", { status: 404 });
         }
-        const resumes = ResumeSchema.array().safeParse(rawresume.toArray());
+        const resumes = ResumeSchema.array().safeParse(rawresume);
         if (!resumes.success) {
             console.error("Resume validation failed:", resumes.error);
             return new Response("Resume data is corrupted", { status: 500 });
         }
-        return new Response(JSON.stringify(resumes), {
+        return new Response(JSON.stringify(resumes.data), {
             status: 200,
             headers: { "Content-Type": "application/json" },
         });
