@@ -78,3 +78,53 @@ export function transformProfileDates(profile: ProfileType) {
 export const formatMonth = (date?: Date) => {
   return date ? format(date, 'MMM yyyy') : '';
 }
+
+export const parseHTMLParagraphs = (html: string): string[] => {
+  // Simple regex-based HTML parsing to extract text from <p> tags
+  const paragraphRegex = /<p>(.*?)<\/p>/g;
+  const matches = [];
+  let match;
+
+  while ((match = paragraphRegex.exec(html)) !== null) {
+    // Remove any HTML tags and decode HTML entities
+    const text = match[1]
+      .replace(/<[^>]*>/g, "") // Remove HTML tags
+      .replace(/&nbsp;/g, " ") // Replace non-breaking spaces
+      .replace(/&amp;/g, "&") // Decode ampersand
+      .replace(/&lt;/g, "<") // Decode less than
+      .replace(/&gt;/g, ">") // Decode greater than
+      .replace(/&quot;/g, '"') // Decode quotes
+      .trim();
+    if (text.length > 0) {
+      matches.push(text);
+    }
+  }
+
+  return matches;
+};
+
+/**
+ * Efficiently filters items by search query across multiple fields.
+ * Uses case-insensitive substring matching for optimal performance.
+ * @param items - Array of items to search
+ * @param query - Search query string
+ * @param fields - Array of field names to search in each item
+ * @returns Filtered array matching the query
+ */
+export const searchItems = <T extends object>(
+  items: T[],
+  query: string,
+  fields: (keyof T)[]
+): T[] => {
+  if (!query.trim()) return items;
+  
+  const lowerQuery = query.toLowerCase();
+  
+  return items.filter((item) =>
+    fields.some((field) => {
+      const value = item[field];
+      if (value === null || value === undefined) return false;
+      return String(value).toLowerCase().includes(lowerQuery);
+    })
+  );
+};

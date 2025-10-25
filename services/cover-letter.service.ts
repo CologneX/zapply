@@ -2,7 +2,6 @@
 
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
-import { geminiClient } from "@/lib/gen-ai";
 import { CreateCoverLetterSchema, CreateCoverLetterType } from "@/types/cover-letter.types";
 import { ObjectId } from "mongodb";
 import { headers } from "next/headers";
@@ -27,7 +26,7 @@ export async function CreateCoverLetterAction(data: CreateCoverLetterType) {
             return { error: "Invalid input" };
         }
 
-        await db.collection("coverLetters").insertOne({
+        const action = await db.collection("coverLetters").insertOne({
             user_id: new ObjectId(session.user.id),
             jobTitle: validatedFields.data.jobTitle,
             companyName: validatedFields.data.companyName,
@@ -37,6 +36,8 @@ export async function CreateCoverLetterAction(data: CreateCoverLetterType) {
             createdAt: new Date(),
             updatedAt: new Date(),
         });
+
+        return { id: action.insertedId.toString() };
     } catch (error) {
         console.error("CreateCoverLetterAction error:", error);
         return { error: "Failed to create cover letter" };

@@ -13,7 +13,7 @@ import {
   CreateCoverLetterType,
 } from "@/types/cover-letter.types";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { DownloadIcon, SaveIcon, SparklesIcon } from "lucide-react";
+import { SaveIcon, SparklesIcon } from "lucide-react";
 import { useTransition } from "react";
 import { useForm } from "react-hook-form";
 
@@ -151,7 +151,7 @@ export default function CoverLetterForm() {
             </AppFormField>
           )}
         />
-        <div className="flex flex-row gap-2 sticky -bottom-2 bg-background p-4">
+        <div className="flex flex-row gap-2">
           <Button
             type="button"
             className="flex-1"
@@ -175,18 +175,6 @@ export default function CoverLetterForm() {
           >
             <SaveIcon />
             Save
-          </Button>
-          <Button
-            type="button"
-            variant="outline"
-            disabled={
-              isGenerating ||
-              !form.formState.isValid ||
-              !form.getValues().content
-            }
-          >
-            <DownloadIcon />
-            PDF
           </Button>
         </div>
       </div>

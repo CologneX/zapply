@@ -14,10 +14,7 @@ export async function POST(request: Request) {
         });
 
         if (!session?.user) {
-            return new Response(JSON.stringify({ error: "Unauthorized" }), {
-                status: 401,
-                headers: { "Content-Type": "application/json" },
-            });
+            return new Response("Unauthorized", { status: 401 });
         }
 
         const body = (await request.json()) as CreateCoverLetterType;
@@ -26,10 +23,7 @@ export async function POST(request: Request) {
         const validatedFields = CreateCoverLetterSchema.safeParse(body);
         if (!validatedFields.success) {
             console.error("Validation error:", validatedFields.error);
-            return new Response(JSON.stringify({ error: "Invalid input" }), {
-                status: 400,
-                headers: { "Content-Type": "application/json" },
-            });
+            return new Response("Invalid Input", { status: 400 });
         }
 
         const profile = await db.collection("profiles").findOne({
@@ -38,15 +32,7 @@ export async function POST(request: Request) {
         });
 
         if (!profile) {
-            return new Response(
-                JSON.stringify({
-                    error: "Profile not found. Please create your profile first.",
-                }),
-                {
-                    status: 404,
-                    headers: { "Content-Type": "application/json" },
-                }
-            );
+            return new Response("Profile not found. Please create a profile first.", { status: 404 });
         }
 
         // Generate cover letter content using AI with streaming
@@ -109,14 +95,6 @@ export async function POST(request: Request) {
         });
     } catch (error) {
         console.error("Generate stream error:", error);
-        return new Response(
-            JSON.stringify({
-                error: error instanceof Error ? error.message : "Failed to generate cover letter",
-            }),
-            {
-                status: 500,
-                headers: { "Content-Type": "application/json" },
-            }
-        );
+        return new Response("Failed to generate cover letter", { status: 500 });
     }
 }

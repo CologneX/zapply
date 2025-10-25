@@ -1,8 +1,7 @@
-"use client";
-
 import { Document, Page, Text, View } from "@react-pdf/renderer";
 import { createTw } from "react-pdf-tailwind";
 import { CoverLetterType } from "@/types/cover-letter.types";
+import { parseHTMLParagraphs } from "@/lib/utils";
 
 const tw = createTw({
   fontFamily: {
@@ -31,7 +30,7 @@ const tw = createTw({
   },
 });
 
-export default function CoverLetterPDF1({
+export function CoverLetterPDF1({
   coverLetter,
   userEmail,
   userName,
@@ -41,8 +40,8 @@ export default function CoverLetterPDF1({
   coverLetter: CoverLetterType;
   userEmail: string;
   userName: string;
-  userPhone: string;
-  userLocation: string;
+  userPhone?: string;
+  userLocation?: string;
 }) {
   const today = new Date();
   const dateString = today.toLocaleDateString("en-US", {
@@ -67,9 +66,9 @@ export default function CoverLetterPDF1({
           </Text>
           <View style={tw("mt-xs flex flex-row gap-sm text-sm text-slate-600")}>
             <Text>{userEmail}</Text>
-            <Text>•</Text>
+            {userPhone && <Text>•</Text>}
             <Text>{userPhone}</Text>
-            <Text>•</Text>
+            {userLocation && <Text>•</Text>}
             <Text>{userLocation}</Text>
           </View>
         </View>
@@ -79,51 +78,16 @@ export default function CoverLetterPDF1({
           <Text style={tw("text-sm text-slate-600")}>{dateString}</Text>
         </View>
 
-        {/* Recipient Info */}
-        <View style={tw("mb-lg")}>
-          <Text style={tw("text-sm font-semibold text-slate-700")}>
-            {coverLetter.companyName}
-          </Text>
-          <Text style={tw("text-sm text-slate-600")}>Hiring Manager</Text>
-        </View>
-
-        {/* Greeting */}
-        <View style={tw("mb-md")}>
-          <Text style={tw("text-sm text-slate-700")}>Dear Hiring Team,</Text>
-        </View>
-
         {/* Cover Letter Content */}
         <View style={tw("mb-lg space-y-md")}>
-          {coverLetter.content.split("\n\n").map((paragraph, index) => (
+          {parseHTMLParagraphs(coverLetter.content).map((paragraph, index) => (
             <Text
               key={index}
               style={tw("text-sm leading-relaxed text-slate-700 mb-md")}
             >
-              {paragraph.trim()}
+              {paragraph}
             </Text>
           ))}
-        </View>
-
-        {/* Closing */}
-        <View style={tw("mt-lg")}>
-          <Text style={tw("text-sm text-slate-700")}>Sincerely,</Text>
-          <View style={tw("mt-lg")}>
-            <Text style={tw("text-sm font-semibold text-slate-900")}>
-              {userName}
-            </Text>
-          </View>
-        </View>
-
-        {/* Footer */}
-        <View
-          fixed
-          style={tw("absolute bottom-md left-md right-md text-center")}
-        >
-          <Text
-            style={tw("text-xs text-slate-400 border-t border-slate-200 pt-sm")}
-          >
-            {userEmail} • {userPhone}
-          </Text>
         </View>
       </Page>
     </Document>

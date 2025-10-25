@@ -1,6 +1,7 @@
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
-import { ResumeSchema } from "@/types/resume.types";
+import { CoverLetterSchema } from "@/types/cover-letter.types";
+import { ObjectId } from "mongodb";
 import { headers } from "next/headers";
 
 export async function GET() {
@@ -12,19 +13,20 @@ export async function GET() {
             return new Response("Unauthorized", { status: 401 });
         }
 
-        const rawcoverletters = db.collection("coverletters").find({
-            user_id: session.user.id,
-            deletedAt: { $exists: false },
-        });
+        const rawcoverletters = await db.collection("coverLetters").find({
+            user_id: new ObjectId(session.user.id),
+            deletedAt: null,
+        }).toArray();
+
         if (!rawcoverletters) {
             return new Response("Cover letters not found", { status: 404 });
         }
-        const coverletters = ResumeSchema.array().safeParse(rawcoverletters.toArray());
+        const coverletters = CoverLetterSchema.array().safeParse(rawcoverletters);
         if (!coverletters.success) {
             console.error("Cover letters validation failed:", coverletters.error);
             return new Response("Cover letters data is corrupted", { status: 500 });
         }
-        return new Response(JSON.stringify(coverletters), {
+        return new Response(JSON.stringify(coverletters.data), {
             status: 200,
             headers: { "Content-Type": "application/json" },
         });
