@@ -10,6 +10,7 @@ interface DashboardSectionProps {
   children: ReactNode;
   isEmpty?: boolean;
   emptyMessage?: string;
+  isSearchEmpty?: boolean;
 }
 
 export function DashboardSection({
@@ -19,6 +20,7 @@ export function DashboardSection({
   children,
   isEmpty = false,
   emptyMessage = "No items yet. Create one to get started!",
+  isSearchEmpty = false,
 }: DashboardSectionProps) {
   return (
     <section className="w-full space-y-3">
@@ -36,7 +38,15 @@ export function DashboardSection({
       {/* Content or Empty State */}
       {isEmpty ? (
         <div className="flex items-center justify-center rounded-lg border border-border bg-muted/20 p-12">
-          <p className="text-muted-foreground text-center text-sm">{emptyMessage}</p>
+          <p className="text-muted-foreground text-center text-sm">
+            {emptyMessage}
+          </p>
+        </div>
+      ) : isSearchEmpty ? (
+        <div className="flex items-center justify-center rounded-lg border border-border bg-muted/20 p-12">
+          <p className="text-muted-foreground text-center text-sm">
+            No results found for &quot;{searchValue}&quot;
+          </p>
         </div>
       ) : (
         <div className="relative">{children}</div>

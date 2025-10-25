@@ -15,7 +15,7 @@ import ProfileForm from "./_components/form";
 export default async function ProfilePage() {
   const queryClient = new QueryClient(queryClientOptions);
   try {
-    await queryClient.fetchQuery({
+    await queryClient.prefetchQuery({
       queryKey: ["profile"],
       queryFn: async () => {
         const session = await auth.api.getSession({

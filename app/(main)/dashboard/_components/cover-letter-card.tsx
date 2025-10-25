@@ -2,31 +2,38 @@
 
 import { CoverLetterType } from "@/types/cover-letter.types";
 import { Button } from "@/components/ui/button";
-import { Trash2, Eye, Edit2 } from "lucide-react";
+import { Trash2, DownloadCloudIcon } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
+import { useCoverLetterQuery } from "@/hooks/query/use-coverLetter";
+import { closeDialog, openDialog } from "@/components/common/dialog";
 
 interface CoverLetterCardProps {
   coverLetter: CoverLetterType;
-  onEdit?: (id: string) => void;
-  onView?: (id: string) => void;
-  onDelete?: (id: string) => void;
 }
 
-export function CoverLetterCard({
-  coverLetter,
-  onEdit,
-  onView,
-  onDelete,
-}: CoverLetterCardProps) {
-  const contentPreview = coverLetter.content
-    .substring(0, 150)
-    .replace(/<[^>]*>/g, "");
-
-  const truncatedPreview =
-    contentPreview.length === 150 ? contentPreview + "..." : contentPreview;
-
+export function CoverLetterCard({ coverLetter }: CoverLetterCardProps) {
+  const { DownloadServerPDF, DeleteCoverLetter } = useCoverLetterQuery();
+  const handleDeleteCL = () => {
+    openDialog({
+      title: "Delete Cover Letter",
+      description:
+        "Are you sure you want to delete this cover letter? This action cannot be undone.",
+      footer: (
+        <Button
+          variant="destructive"
+          onClick={async () => {
+            DeleteCoverLetter.mutate(coverLetter._id);
+            closeDialog();
+          }}
+          loading={DeleteCoverLetter.isPending}
+        >
+          Delete
+        </Button>
+      ),
+    });
+  };
   return (
-    <div className="group relative rounded-lg border border-border bg-muted/20 p-3 transition-all hover:bg-muted/40 hover:border-border/80">
+    <div className="relative rounded-lg border border-border bg-muted/20 p-3 transition-all hover:bg-muted/40 hover:border-border/80 min-w-72">
       {/* Content */}
       <div className="flex flex-col gap-2">
         {/* Header */}
@@ -39,11 +46,6 @@ export function CoverLetterCard({
           </div>
         </div>
 
-        {/* Preview */}
-        <p className="text-xs text-muted-foreground leading-relaxed">
-          {truncatedPreview}
-        </p>
-
         {/* Footer */}
         <div className="flex items-center justify-between gap-2 pt-2">
           <span className="text-xs text-muted-foreground">
@@ -53,30 +55,29 @@ export function CoverLetterCard({
           </span>
 
           {/* Action Buttons */}
-          <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+          <div className="flex items-center gap-1">
             <Button
               variant="ghost"
-              size="sm"
-              className="h-7 w-7 p-0"
-              onClick={() => onView?.(coverLetter._id)}
-              title="View"
+              size="icon-sm"
+              onClick={() => DownloadServerPDF.mutate(coverLetter._id)}
+              loading={DownloadServerPDF.isPending}
+              title="Download PDF"
             >
-              <Eye className="h-3.5 w-3.5" />
+              <DownloadCloudIcon className="h-3.5 w-3.5" />
             </Button>
-            <Button
+            {/* <Button
               variant="ghost"
-              size="sm"
-              className="h-7 w-7 p-0"
+              size="icon-sm"
+              
               onClick={() => onEdit?.(coverLetter._id)}
               title="Edit"
             >
               <Edit2 className="h-3.5 w-3.5" />
-            </Button>
+            </Button> */}
             <Button
-              variant="ghost"
-              size="sm"
-              className="h-7 w-7 p-0 text-destructive hover:text-destructive hover:bg-destructive/10"
-              onClick={() => onDelete?.(coverLetter._id)}
+              variant="destructive"
+              size="icon-sm"
+              onClick={handleDeleteCL}
               title="Delete"
             >
               <Trash2 className="h-3.5 w-3.5" />

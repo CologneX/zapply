@@ -1,15 +1,18 @@
 import { ErrorPageWrapper } from "@/components/common/errors";
 import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
+import { DashboardContent } from "@/app/(main)/dashboard/_components/dashboard-content";
+import {
+  HydrationBoundary,
+  QueryClient,
+  dehydrate,
+} from "@tanstack/react-query";
+import { CoverLetterKeys } from "@/types/query-keys/cover-letter.keys";
+import { resumeKeys } from "@/types/query-keys/resume.keys";
 import { db } from "@/lib/db";
+import { ObjectId } from "mongodb";
 import { CoverLetterSchema } from "@/types/cover-letter.types";
 import { ResumeSchema } from "@/types/resume.types";
-import { headers } from "next/headers";
-import { HeroButtonsSection } from "@/app/(main)/dashboard/_components/hero-buttons";
-import { DashboardSection } from "@/app/(main)/dashboard/_components/dashboard-section";
-import { ScrollContainer } from "@/app/(main)/dashboard/_components/scroll-container";
-import { CoverLetterCard } from "@/app/(main)/dashboard/_components/cover-letter-card";
-import { ResumeCard } from "@/app/(main)/dashboard/_components/resume-card";
-import { ObjectId } from "mongodb";
 import { ProfileSchema } from "@/types/profile.types";
 
 export default async function DashboardPage() {
@@ -25,107 +28,79 @@ export default async function DashboardPage() {
     );
   }
 
-  // Fetch cover letters
-  const coverLettersRaw = await db
-    .collection("coverLetters")
-    .find({
-      user_id: new ObjectId(session.user.id),
-      deletedAt: null,
-    })
-    .toArray();
-  const coverLettersResult =
-    CoverLetterSchema.array().safeParse(coverLettersRaw);
+  const userId = new ObjectId(session.user.id);
+  const queryClient = new QueryClient();
 
-  if (!coverLettersResult.success) {
-    return (
-      <ErrorPageWrapper>
-        <h2 className="text-center">Failed to load cover letters</h2>
-      </ErrorPageWrapper>
-    );
-  }
+  await queryClient.prefetchQuery({
+    queryKey: resumeKeys.all,
+    queryFn: async () => {
+      // Fetch resumes
+      const resumesRaw = await db
+        .collection("resumes")
+        .find({
+          user_id: userId,
+          deletedAt: null,
+        })
+        .toArray();
 
-  const coverLetters = coverLettersResult.data;
+      const resumesResult = ResumeSchema.array().safeParse(resumesRaw);
 
-  // Fetch resumes
-  const resumesRaw = await db
-    .collection("resumes")
-    .find({
-      user_id: new ObjectId(session.user.id),
-      deletedAt: null,
-    })
-    .toArray();
+      if (!resumesResult.success) {
+        throw new Error("Failed to parse resumes data");
+      }
+      // Set resumes query data
+      return resumesResult.data;
+    },
+  });
 
-  const resumesResult = ResumeSchema.array().safeParse(resumesRaw);
+  await queryClient.prefetchQuery({
+    queryKey: CoverLetterKeys.all,
+    queryFn: async () => {
+      // Fetch cover letters
+      const coverLettersRaw = await db
+        .collection("coverLetters")
+        .find({
+          user_id: userId,
+          deletedAt: null,
+        })
+        .toArray();
 
-  if (!resumesResult.success) {
-    return (
-      <ErrorPageWrapper>
-        <h2 className="text-center">Failed to load resumes</h2>
-      </ErrorPageWrapper>
-    );
-  }
+      const coverLettersResult =
+        CoverLetterSchema.array().safeParse(coverLettersRaw);
 
-  const resumes = resumesResult.data;
+      if (!coverLettersResult.success) {
+        console.error(
+          "Cover letters validation failed:",
+          coverLettersResult.error
+        );
+      }
 
-  const profileRaw = await db
-    .collection("profiles")
-    .findOne({ user_id: new ObjectId(session.user.id) });
-  const profileResult = ProfileSchema.safeParse(profileRaw);
-  const profile = profileResult.success ? profileResult.data : null;
-  
+      return coverLettersResult.data;
+    },
+  });
 
-  const canCreateCoverLetterAndResume = !!(profile !== null && profile.name && profile.email && profile.description && profile.headline);
+  await queryClient.prefetchQuery({
+    queryKey: ["profile"],
+    queryFn: async () => {
+      const profileRaw = await db.collection("profiles").findOne({
+        user_id: userId,
+        deletedAt: null,
+      });
 
+      const profileResult = ProfileSchema.safeParse(profileRaw);
+
+      if (!profileResult.success) {
+        throw new Error("Failed to parse profile data");
+      }
+
+      return profileResult.data;
+    },
+  });
+
+  const dehydratedState = dehydrate(queryClient);
   return (
-    <div className="flex flex-col gap-8 px-4 mx-auto container py-8">
-      {/* Page Title */}
-      <div>
-        <h1>Dashboard</h1>
-        <p className="text-muted-foreground">
-          Manage your resumes and cover letters
-        </p>
-      </div>
-
-      {/* Hero Buttons */}
-      <HeroButtonsSection canCreateCoverLetterAndResume={canCreateCoverLetterAndResume} />
-
-      {/* Cover Letters Section */}
-      <DashboardSection
-        title="Your Cover Letters"
-        isEmpty={coverLetters.length === 0}
-        emptyMessage="No cover letters yet. Create one to get started!"
-      >
-        <ScrollContainer containerClassName="relative">
-          {coverLetters.map((coverLetter) => (
-            <CoverLetterCard
-              key={coverLetter._id}
-              coverLetter={coverLetter}
-              // onEdit={(id) => console.log("Edit cover letter:", id)}
-              // onView={(id) => console.log("View cover letter:", id)}
-              // onDelete={(id) => console.log("Delete cover letter:", id)}
-            />
-          ))}
-        </ScrollContainer>
-      </DashboardSection>
-
-      {/* Resumes Section */}
-      <DashboardSection
-        title="Your Resumes"
-        isEmpty={resumes.length === 0}
-        emptyMessage="No resumes yet. Create one to get started!"
-      >
-        <ScrollContainer containerClassName="relative">
-          {resumes.map((resume) => (
-            <ResumeCard
-              key={resume._id}
-              resume={resume}
-              // onEdit={(id) => console.log("Edit resume:", id)}
-              // onView={(id) => console.log("View resume:", id)}
-              // onDelete={(id) => console.log("Delete resume:", id)}
-            />
-          ))}
-        </ScrollContainer>
-      </DashboardSection>
-    </div>
+    <HydrationBoundary state={dehydratedState}>
+      <DashboardContent />
+    </HydrationBoundary>
   );
 }

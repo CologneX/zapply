@@ -10,7 +10,6 @@ export async function GET() {
             headers: await headers(),
         });
         if (!session) {
-            console.log("No active session found");
             return new Response("Unauthorized", { status: 401 });
         }
         const rawprofile = await db.collection("profiles").findOne({

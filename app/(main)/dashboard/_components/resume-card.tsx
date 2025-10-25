@@ -2,26 +2,23 @@
 
 import { ResumeType } from "@/types/resume.types";
 import { Button } from "@/components/ui/button";
-import { Trash2, Eye, Edit2 } from "lucide-react";
+import { Trash2, DownloadCloudIcon } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { Badge } from "@/components/ui/badge";
+import { closeDialog, openDialog } from "@/components/common/dialog";
+import { useResumeQuery } from "@/hooks/query/use-resume";
 
 interface ResumeCardProps {
   resume: ResumeType;
-  onEdit?: (id: string) => void;
-  onView?: (id: string) => void;
-  onDelete?: (id: string) => void;
 }
 
-export function ResumeCard({
-  resume,
-  onEdit,
-  onView,
-  onDelete,
-}: ResumeCardProps) {
+export function ResumeCard({ resume }: ResumeCardProps) {
+  const { DeleteResume } = useResumeQuery();
   const matchScore = resume.matchScore ?? 0;
   const keywordsMatched = resume.keywordsMatched?.length ?? 0;
   const keywordsMissing = resume.keywordsMissing?.length ?? 0;
+
+  const { DownloadServerPDF } = useResumeQuery();
 
   // Determine color based on match score
   const getMatchScoreColor = (score: number) => {
@@ -30,8 +27,28 @@ export function ResumeCard({
     return "bg-red-500/10 text-red-700 border-red-200";
   };
 
+  const handleDeleteResume = () => {
+    openDialog({
+      title: "Delete Cover Letter",
+      description:
+        "Are you sure you want to delete this cover letter? This action cannot be undone.",
+      footer: (
+        <Button
+          variant="destructive"
+          onClick={async () => {
+            DeleteResume.mutate(resume._id);
+            closeDialog();
+          }}
+          loading={DeleteResume.isPending}
+        >
+          Delete
+        </Button>
+      ),
+    });
+  };
+
   return (
-    <div className="group relative rounded-lg border border-border bg-muted/20 p-3 transition-all hover:bg-muted/40 hover:border-border/80">
+    <div className="relative rounded-lg border border-border bg-muted/20 p-3 transition-all hover:bg-muted/40 hover:border-border/80 min-w-72">
       {/* Content */}
       <div className="flex flex-col gap-2">
         {/* Header */}
@@ -45,7 +62,9 @@ export function ResumeCard({
           {/* Match Score Badge */}
           {matchScore > 0 && (
             <Badge
-              className={`flex-shrink-0 text-xs font-semibold ${getMatchScoreColor(matchScore)}`}
+              className={`shrink-0 text-xs font-semibold ${getMatchScoreColor(
+                matchScore
+              )}`}
             >
               {matchScore}%
             </Badge>
@@ -61,7 +80,7 @@ export function ResumeCard({
             /
             <span className="text-amber-700 font-medium">
               {keywordsMissing}
-            </span>
+            </span>{" "}
             keywords
           </p>
         )}
@@ -75,30 +94,30 @@ export function ResumeCard({
           </span>
 
           {/* Action Buttons */}
-          <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+          <div className="flex items-center gap-1">
             <Button
               variant="ghost"
-              size="sm"
-              className="h-7 w-7 p-0"
-              onClick={() => onView?.(resume._id)}
-              title="View"
+              size="icon-sm"
+              onClick={() => DownloadServerPDF.mutate(resume._id)}
+              loading={DownloadServerPDF.isPending}
+              title="Download PDF"
             >
-              <Eye className="h-3.5 w-3.5" />
+              <DownloadCloudIcon className="h-3.5 w-3.5" />
             </Button>
-            <Button
+            {/* <Button
               variant="ghost"
-              size="sm"
-              className="h-7 w-7 p-0"
-              onClick={() => onEdit?.(resume._id)}
+              size="icon-sm"
+              
+              onClick={() => onEdit?.(coverLetter._id)}
               title="Edit"
             >
               <Edit2 className="h-3.5 w-3.5" />
-            </Button>
+            </Button> */}
             <Button
-              variant="ghost"
-              size="sm"
-              className="h-7 w-7 p-0 text-destructive hover:text-destructive hover:bg-destructive/10"
-              onClick={() => onDelete?.(resume._id)}
+              variant="destructive"
+              size="icon-sm"
+              onClick={handleDeleteResume}
+              loading={DeleteResume.isPending}
               title="Delete"
             >
               <Trash2 className="h-3.5 w-3.5" />

@@ -2,7 +2,7 @@
 
 import { motion } from "motion/react";
 import Link from "next/link";
-import { FileText, Briefcase, User, AlertCircle } from "lucide-react";
+import { FileText, Briefcase, User } from "lucide-react";
 import { RouteURL } from "@/lib/routes";
 import {
   Tooltip,

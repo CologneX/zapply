@@ -54,7 +54,7 @@ export function ScrollContainer({
         <div
           className={cn(
             "absolute left-0 top-0 bottom-0 w-12 pointer-events-none z-10 transition-opacity duration-300",
-            "bg-gradient-to-r from-background to-transparent",
+            "bg-linear-to-r from-background to-transparent",
             showLeftBlur ? "opacity-100" : "opacity-0"
           )}
         />
@@ -76,7 +76,7 @@ export function ScrollContainer({
         <div
           className={cn(
             "absolute right-0 top-0 bottom-0 w-12 pointer-events-none z-10 transition-opacity duration-300",
-            "bg-gradient-to-l from-background to-transparent",
+            "bg-linear-to-l from-background to-transparent",
             showRightBlur ? "opacity-100" : "opacity-0"
           )}
         />
