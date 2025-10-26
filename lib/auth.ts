@@ -46,7 +46,7 @@ export const auth = betterAuth({
     advanced: {
         crossSubDomainCookies: {
             enabled: true,
-            domain: ".zapply.cloud",
+            domain: process.env.NODE_ENV === "production" ? ".zapply.cloud" : "localhost",
         },
     },
     socialProviders: {
