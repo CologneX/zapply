@@ -79,7 +79,7 @@ function HeaderSection({
       {!isEditing("general") ? (
         <motion.div layout className="space-y-4">
           {/* Header with Name and Headline */}
-          <div className="space-y-2 group relative">
+          <div className="space-y-2 relative">
             <div className="flex items-baseline justify-between">
               <div className="flex-1">
                 <h1>{name || "Add your name"}</h1>
@@ -87,7 +87,7 @@ function HeaderSection({
                   {headline || "Your professional headline"}
                 </p>
               </div>
-              <div className="opacity-0 group-hover:opacity-100 transition-opacity">
+              <div className="transition-opacity">
                 {FieldButtons("general")}
               </div>
             </div>
@@ -95,8 +95,8 @@ function HeaderSection({
 
           {/* Contact & Location Info - Compact Inline */}
           <div className="flex flex-wrap items-center gap-3">
-            <motion.div layout className="group relative flex-1 min-w-[150px]">
-              <div className="rounded-lg border border-border bg-muted/30 p-3 transition-colors group-hover:bg-muted/60">
+            <motion.div layout className="relative flex-1 min-w-[150px]">
+              <div className="rounded-lg border border-border bg-muted/30 p-3 transition-colors hover:bg-muted/60">
                 <p className="text-xs font-medium text-muted-foreground mb-1">
                   Email
                 </p>
@@ -104,8 +104,8 @@ function HeaderSection({
               </div>
             </motion.div>
 
-            <motion.div layout className="group relative flex-1 min-w-[150px]">
-              <div className="rounded-lg border border-border bg-muted/30 p-3 transition-colors group-hover:bg-muted/60">
+            <motion.div layout className="relative flex-1 min-w-[150px]">
+              <div className="rounded-lg border border-border bg-muted/30 p-3 transition-colors hover:bg-muted/60">
                 <p className="text-xs font-medium text-muted-foreground mb-1">
                   Phone
                 </p>
@@ -113,8 +113,8 @@ function HeaderSection({
               </div>
             </motion.div>
 
-            <motion.div layout className="group relative flex-1 min-w-[150px]">
-              <div className="rounded-lg border border-border bg-muted/30 p-3 transition-colors group-hover:bg-muted/60">
+            <motion.div layout className="relative flex-1 min-w-[150px]">
+              <div className="rounded-lg border border-border bg-muted/30 p-3 transition-colors hover:bg-muted/60">
                 <p className="text-xs font-medium text-muted-foreground mb-1">
                   Location
                 </p>
@@ -126,7 +126,7 @@ function HeaderSection({
           {/* About Section */}
           <motion.div
             layout
-            className="group relative rounded-lg border border-border bg-muted/20 p-4 transition-colors hover:bg-muted/40"
+            className="relative rounded-lg border border-border bg-muted/20 p-4 transition-colors hover:bg-muted/40"
           >
             <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2">
               About
@@ -285,7 +285,7 @@ function WorkExperienceSection({
                 transition={{ duration: 0.2 }}
               >
                 {!isEditing(`workExperiences.${index}`) ? (
-                  <div className="group relative rounded-lg border border-border bg-muted/20 p-3 transition-all hover:bg-muted/40 hover:border-border/80">
+                  <div className="relative rounded-lg border border-border bg-muted/20 p-3 transition-all hover:bg-muted/40 hover:border-border/80">
                     <div className="flex items-start justify-between gap-2 mb-1">
                       <div>
                         <h6>{form.watch(`workExperiences.${index}.name`)}</h6>
@@ -297,7 +297,7 @@ function WorkExperienceSection({
                         </p>
                       </div>
 
-                      <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <div className="flex gap-1">
                         {FieldButtons(`workExperiences.${index}`)}
                         {RemoveFieldButton(() => removeWork(index))}
                       </div>
@@ -571,7 +571,7 @@ function EducationSection({
                 transition={{ duration: 0.2 }}
               >
                 {!isEditing(`educations.${index}`) ? (
-                  <div className="rounded-lg border border-border bg-muted/20 p-3 hover:bg-muted/40 transition-colors group">
+                  <div className="rounded-lg border border-border bg-muted/20 p-3 hover:bg-muted/40 transition-colors">
                     <div className="flex items-start justify-between gap-2 mb-1">
                       <div>
                         <h6>{form.watch(`educations.${index}.degree`)}</h6>
@@ -580,7 +580,7 @@ function EducationSection({
                         </p>
                       </div>
 
-                      <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <div className="flex gap-1">
                         {FieldButtons(`educations.${index}`)}
                         {RemoveFieldButton(() => removeEducation(index))}
                       </div>
@@ -806,7 +806,7 @@ function CertificationsSection({
                 transition={{ duration: 0.2 }}
               >
                 {!isEditing(`certifications.${index}`) ? (
-                  <div className="group relative rounded-lg border border-border bg-muted/20 p-3 transition-all hover:bg-muted/40 hover:border-border/80">
+                  <div className="relative rounded-lg border border-border bg-muted/20 p-3 transition-all hover:bg-muted/40 hover:border-border/80">
                     <div className="flex items-start justify-between">
                       <div className="flex-1 min-w-0">
                         <h6>{form.watch(`certifications.${index}.name`)}</h6>
@@ -844,7 +844,7 @@ function CertificationsSection({
                         )}
                       </div>
 
-                      <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <div className="flex gap-1">
                         {FieldButtons(`certifications.${index}`)}
                         {RemoveFieldButton(() => removeCertification(index))}
                       </div>
@@ -1007,7 +1007,7 @@ function AwardsSection({
                 transition={{ duration: 0.2 }}
               >
                 {!isEditing(`awardOrHonors.${index}`) ? (
-                  <div className="group relative rounded-lg border border-border bg-muted/20 p-3 transition-all hover:bg-muted/40 hover:border-border/80">
+                  <div className="relative rounded-lg border border-border bg-muted/20 p-3 transition-all hover:bg-muted/40 hover:border-border/80">
                     <div className="flex items-start justify-between">
                       <div className="flex-1 min-w-0">
                         <h6>{form.watch(`awardOrHonors.${index}.name`)}</h6>
@@ -1047,7 +1047,7 @@ function AwardsSection({
                         )}
                       </div>
 
-                      <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <div className="flex gap-1">
                         {FieldButtons(`awardOrHonors.${index}`)}
                         {RemoveFieldButton(() => removeAward(index))}
                       </div>
@@ -1187,7 +1187,7 @@ function PublicationsSection({
                 transition={{ duration: 0.2 }}
               >
                 {!isEditing(`publications.${index}`) ? (
-                  <div className="group relative rounded-lg border border-border bg-muted/20 p-3 transition-all hover:bg-muted/40 hover:border-border/80">
+                  <div className="relative rounded-lg border border-border bg-muted/20 p-3 transition-all hover:bg-muted/40 hover:border-border/80">
                     <div className="flex items-start justify-between gap-2">
                       <div className="flex-1 min-w-0">
                         <h6>{form.watch(`publications.${index}.title`)}</h6>
@@ -1209,7 +1209,7 @@ function PublicationsSection({
                           </Link>
                         )}
                       </div>
-                      <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <div className="flex gap-1">
                         {FieldButtons(`publications.${index}`)}
                         {RemoveFieldButton(() => removePublication(index))}
                       </div>
@@ -1327,7 +1327,7 @@ function LanguagesSection({
                 transition={{ duration: 0.2 }}
               >
                 {!isEditing(`languages.${index}`) ? (
-                  <div className="group relative rounded-lg border border-border bg-muted/20 p-3 transition-all hover:bg-muted/40 hover:border-border/80 flex items-center justify-between">
+                  <div className="relative rounded-lg border border-border bg-muted/20 p-3 transition-all hover:bg-muted/40 hover:border-border/80 flex items-center justify-between">
                     <div className="flex-1">
                       <div className="flex items-center gap-2 flex-wrap">
                         <h6>{form.watch(`languages.${index}.name`)}</h6>
@@ -1338,7 +1338,7 @@ function LanguagesSection({
                         </Badge>
                       </div>
                     </div>
-                    <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <div className="flex gap-1">
                       {FieldButtons(`languages.${index}`)}
                       {RemoveFieldButton(() => removeLanguage(index))}
                     </div>
@@ -1493,7 +1493,7 @@ function ProjectsSection({
                 transition={{ duration: 0.2 }}
               >
                 {!isEditing(`projects.${index}`) ? (
-                  <div className="group relative rounded-lg border border-border bg-muted/20 p-3 transition-all hover:bg-muted/40 hover:border-border/80 space-y-2">
+                  <div className="relative rounded-lg border border-border bg-muted/20 p-3 transition-all hover:bg-muted/40 hover:border-border/80 space-y-2">
                     <div className="flex items-start justify-between">
                       <div className="flex-1 min-w-0">
                         <h5>{form.watch(`projects.${index}.name`)}</h5>
@@ -1503,7 +1503,7 @@ function ProjectsSection({
                           </p>
                         )}
                       </div>
-                      <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <div className="flex gap-1">
                         {FieldButtons(`projects.${index}`)}
                         {RemoveFieldButton(() => removeProject(index))}
                       </div>
@@ -1758,7 +1758,7 @@ function SocialsSection({
                 transition={{ duration: 0.2 }}
               >
                 {!isEditing(`socials.${index}`) ? (
-                  <div className="group relative rounded-lg border border-border bg-muted/20 p-3 transition-all hover:bg-muted/40 hover:border-border/80">
+                  <div className="relative rounded-lg border border-border bg-muted/20 p-3 transition-all hover:bg-muted/40 hover:border-border/80">
                     <div className="flex items-center justify-between">
                       <div className="flex-1 min-w-0">
                         <h6>{form.watch(`socials.${index}.name`)}</h6>
@@ -1771,7 +1771,7 @@ function SocialsSection({
                           {form.watch(`socials.${index}.url`)}
                         </Link>
                       </div>
-                      <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <div className="flex gap-1">
                         {FieldButtons(`socials.${index}`)}
                         {RemoveFieldButton(() => removeSocial(index))}
                       </div>
