@@ -45,8 +45,17 @@ import { Switch } from "@/components/ui/switch";
 import { ClientCreateEducationType } from "@/types/profile.types";
 import { closeDialog, openDialog } from "@/components/common/dialog";
 import { motion, AnimatePresence } from "motion/react";
-import RichTextEditor from "@/components/ui/rich-text-editor";
-import { MonthPicker } from "@/components/ui/month-picker";
+import dynamic from 'next/dynamic';
+
+const RichTextEditor = dynamic(() => import('@/components/ui/rich-text-editor'), {
+  ssr: false,
+  loading: () => <div className="min-h-[80px]" />,
+});
+
+const MonthPicker = dynamic(
+  () => import('@/components/ui/month-picker').then((m) => m.MonthPicker),
+  { ssr: false }
+);
 
 function HeaderSection({
   form,

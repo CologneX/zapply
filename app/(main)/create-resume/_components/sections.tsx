@@ -43,8 +43,17 @@ import { Switch } from "@/components/ui/switch";
 import { ClientCreateEducationType } from "@/types/profile.types";
 import { closeDialog, openDialog } from "@/components/common/dialog";
 import { motion, AnimatePresence } from "motion/react";
-import RichTextEditor from "@/components/ui/rich-text-editor";
-import { MonthPicker } from "@/components/ui/month-picker";
+import dynamic from 'next/dynamic';
+
+const RichTextEditor = dynamic(() => import('@/components/ui/rich-text-editor'), {
+  ssr: false,
+  loading: () => <div className="min-h-[80px]" />,
+});
+
+const MonthPicker = dynamic(
+  () => import('@/components/ui/month-picker').then((mod) => mod.MonthPicker),
+  { ssr: false }
+);
 import { ClientCreateResumeType } from "@/types/resume.types";
 import {
   Card,
@@ -73,9 +82,7 @@ function InfoSection({
       <section className="flex flex-col md:flex-row gap-2 overflow-y-hidden">
         <div className="flex-1 flex-col">
           <div className="flex flex-col items-center">
-            <ProgressRadial
-              value={form.getValues("matchScore") || 0}
-              size={120}
+              <ProgressRadial
               startAngle={-180}
               endAngle={0}
               strokeWidth={10}

@@ -13,7 +13,12 @@ import {
 import { RouteURL } from "@/lib/routes";
 import { User } from "better-auth";
 import { openDialog } from "./dialog";
-import AccountSettingsContent from "./account-settings-dialog";
+import dynamic from "next/dynamic";
+
+const AccountSettingsContent = dynamic(
+  () => import("./account-settings-dialog"),
+  { ssr: false, loading: () => <div /> }
+);
 import { Button } from "@/components/ui/button";
 import { useSession } from "@/lib/auth-client";
 import { toast } from "sonner";

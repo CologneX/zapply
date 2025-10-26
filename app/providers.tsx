@@ -1,7 +1,12 @@
 "use client";
 
 import DialogProvider from "@/components/common/dialog";
-import { Toaster } from "@/components/ui/sonner";
+import dynamic from "next/dynamic";
+
+const Toaster = dynamic(
+  () => import("@/components/ui/sonner").then((m) => m.Toaster),
+  { ssr: false }
+);
 import { queryClientOptions } from "@/lib/query-client";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useState } from "react";

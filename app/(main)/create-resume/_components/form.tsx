@@ -6,7 +6,15 @@ import { AppForm, AppFormField } from "@/components/common/form";
 import { Button } from "@/components/ui/button";
 import { useResumeQuery } from "@/hooks/query/use-resume";
 import { FormField } from "@/components/ui/form";
-import RichTextEditor from "@/components/ui/rich-text-editor";
+import dynamic from "next/dynamic";
+
+const RichTextEditor = dynamic(
+  () => import("@/components/ui/rich-text-editor"),
+  {
+    ssr: false,
+    loading: () => <div className="min-h-[120px]" />,
+  }
+);
 import { Input } from "@/components/ui/input";
 import { motion } from "motion/react";
 import { useState } from "react";
