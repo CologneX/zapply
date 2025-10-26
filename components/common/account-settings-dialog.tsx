@@ -9,6 +9,7 @@ import { useForm } from "react-hook-form";
 import { FormField } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useSession } from "@/lib/auth-client";
+import { closeDialog } from "./dialog";
 
 export default function AccountSettingsContent() {
   const { Logout } = useAuthQuery();
@@ -22,7 +23,10 @@ export default function AccountSettingsContent() {
         <Button
           variant="destructive"
           className="mr-auto"
-          onClick={() => Logout.mutate()}
+          onClick={async () => {
+            await Logout.mutateAsync();
+            closeDialog();
+          }}
           loading={Logout.isPending}
         >
           <LogOutIcon />
