@@ -49,7 +49,7 @@ import dynamic from 'next/dynamic';
 
 const RichTextEditor = dynamic(() => import('@/components/ui/rich-text-editor'), {
   ssr: false,
-  loading: () => <div className="min-h-[80px]" />,
+  loading: () => <div className="min-h-20" />,
 });
 
 const MonthPicker = dynamic(
