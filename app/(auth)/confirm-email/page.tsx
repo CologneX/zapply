@@ -2,8 +2,22 @@ import Link from "next/link";
 import { RouteURL } from "@/lib/routes";
 import { InfoIcon } from "lucide-react";
 import { Alert, AlertTitle } from "@/components/ui/alert";
-import ConfirmEmailOTPForm from "./_components/confirm-email-otp-form";
-import ResendEmailVerificationOTPButton from "./_components/resend-email-verification-top-button";
+import dynamic from "next/dynamic";
+import { Spinner } from "@/components/ui/spinner";
+
+const ConfirmEmailOTPForm = dynamic(
+  () => import("./_components/confirm-email-otp-form"),
+  {
+    loading: () => <Spinner className="mx-auto" />,
+  }
+);
+
+const ResendEmailVerificationOTPButton = dynamic(
+  () => import("./_components/resend-email-verification-top-button"),
+  {
+    loading: () => <Spinner className="h-4 w-4" />,
+  }
+);
 
 export default async function ConfirmEmailPage({
   searchParams,

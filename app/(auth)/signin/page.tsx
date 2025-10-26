@@ -6,14 +6,28 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import SignInForm from "./_component/form";
+import dynamic from "next/dynamic";
 import Link from "next/link";
 import { RouteURL } from "@/lib/routes";
-import { SignInWithGoogle } from "@/components/common/signin-socials-button";
+import { Spinner } from "@/components/ui/spinner";
+
+const SignInForm = dynamic(() => import("./_component/form"), {
+  loading: () => <Spinner className="mx-auto" />,
+});
+
+const SignInWithGoogle = dynamic(
+  () =>
+    import("@/components/common/signin-socials-button").then(
+      (mod) => mod.SignInWithGoogle
+    ),
+  {
+    loading: () => <Spinner className="mx-auto" />,
+  }
+);
 
 export default function SignInPage() {
   return (
-    <div className="w-full flex items-center justify-center bg-gradient-to-br from-background to-muted/20 p-4">
+    <div className="w-full flex items-center justify-center bg-linear-to-br from-background to-muted/20 p-4">
       <div className="w-full max-w-md space-y-6">
         {/* Header */}
         <div className="text-center space-y-2">
