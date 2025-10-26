@@ -30,7 +30,10 @@ const BannerAction = dynamic(
 import { CircleAlert } from "lucide-react";
 import { useSession } from "@/lib/auth-client";
 const AccountSettingsContent = dynamic(
-  () => import("@/components/common/account-settings-dialog").then((m) => m.default),
+  () =>
+    import("@/components/common/account-settings-dialog").then(
+      (m) => m.default
+    ),
   { ssr: false }
 );
 
@@ -39,7 +42,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
   const { data } = useSession();
   return (
     <QueryClientProvider client={queryClient}>
-      {data !== undefined && !data?.user?.displayUsername && (
+      {data?.user && !data.user.username && (
         <Banner>
           <BannerIcon icon={CircleAlert} />
           <BannerTitle>Set up your Username to share your profile</BannerTitle>
