@@ -46,14 +46,9 @@ export const auth = betterAuth({
     advanced: {
         crossSubDomainCookies: {
             enabled: true,
-            domain: "zapply.cloud",
+            domain: ".zapply.cloud",
         },
     },
-    trustedOrigins: [
-        process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000",
-        "https://www.zapply.cloud",
-        "http://zapply.cloud",
-    ],
     socialProviders: {
         google: ({
             prompt: "select_account",
