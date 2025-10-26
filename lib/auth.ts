@@ -44,20 +44,16 @@ export const auth = betterAuth({
         },
     },
     advanced: {
-        cookiePrefix: "zapply",
-        useSecureCookies: process.env.NODE_ENV === "production",
         crossSubDomainCookies: {
-            enabled: process.env.NODE_ENV === "production",
+            enabled: true,
+            domain: "zapply.cloud",
         },
     },
-    cors: {
-        allowedOrigins: [
-            "https://zapply.cloud",
-            "https://www.zapply.cloud",
-            process.env.NEXT_PUBLIC_APP_URL,
-        ],
-        allowCredentials: true,
-    },
+    trustedOrigins: [
+        process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000",
+        "https://www.zapply.cloud",
+        "http://zapply.cloud",
+    ],
     socialProviders: {
         google: ({
             prompt: "select_account",
