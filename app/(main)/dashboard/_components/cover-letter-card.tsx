@@ -78,6 +78,7 @@ export function CoverLetterCard({ coverLetter }: CoverLetterCardProps) {
               variant="destructive"
               size="icon-sm"
               onClick={handleDeleteCL}
+              loading={DeleteCoverLetter.isPending}
               title="Delete"
             >
               <Trash2 className="h-3.5 w-3.5" />
