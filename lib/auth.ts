@@ -43,6 +43,21 @@ export const auth = betterAuth({
             maxAge: 5 * 60,
         },
     },
+    advanced: {
+        cookiePrefix: "zapply",
+        useSecureCookies: process.env.NODE_ENV === "production",
+        crossSubDomainCookies: {
+            enabled: process.env.NODE_ENV === "production",
+        },
+    },
+    cors: {
+        allowedOrigins: [
+            "https://zapply.cloud",
+            "https://www.zapply.cloud",
+            process.env.NEXT_PUBLIC_APP_URL,
+        ],
+        allowCredentials: true,
+    },
     socialProviders: {
         google: ({
             prompt: "select_account",
