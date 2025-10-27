@@ -107,7 +107,7 @@ export default function RichTextEditor({
         >
           <Italic className="h-4 w-4" />
         </Toggle>
-
+{/* 
         <Toggle
           size="sm"
           pressed={editor.isActive("strike")}
@@ -115,7 +115,7 @@ export default function RichTextEditor({
           disabled={!editor.can().chain().focus().toggleStrike().run()}
         >
           <Strikethrough className="h-4 w-4" />
-        </Toggle>
+        </Toggle> */}
 
         <Toggle
           size="sm"
