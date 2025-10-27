@@ -61,7 +61,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
         </Banner>
       )}
       <DialogProvider>{children}</DialogProvider>
-      <Toaster position="bottom-left" />
+      <Toaster position="bottom-left" expand={true} closeButton richColors />
     </QueryClientProvider>
   );
 }
