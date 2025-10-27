@@ -148,6 +148,7 @@ export const AuthGoogleAction = async (): Promise<void> => {
             body: {
                 provider: "google",
                 requestSignUp: true,
+                callbackURL: RouteURL.DASHBOARD,
             }
         });
         if (data && data.url) {
