@@ -25,9 +25,9 @@ export default function Home() {
         <div
           className={cn(
             "absolute inset-0",
-            "[background-size:20px_20px]",
-            "[background-image:radial-gradient(#d4d4d4_1px,transparent_2px)]",
-            "dark:[background-image:radial-gradient(#404040_1px,transparent_1px)]"
+            "bg-size-[20px_20px]",
+            "bg-[radial-gradient(#d4d4d4_1px,transparent_2px)]",
+            "dark:bg-[radial-gradient(#404040_1px,transparent_1px)]"
           )}
         />
         {/* Radial gradient for the container to give a faded look */}
@@ -68,7 +68,7 @@ export default function Home() {
             </Badge>
             <div className="flex flex-col items-center justify-center space-y-2 mb-6">
               <h2 className="text-foreground ">Everything you need to </h2>
-              <p className="bg-gradient-to-r from-primary to-chart-1 bg-clip-text text-transparent font-extrabold text-5xl lg:text-7xl italic">
+              <p className="bg-linear-to-r from-primary to-chart-1 bg-clip-text text-transparent font-extrabold text-5xl lg:text-7xl italic">
                 stand out
               </p>
             </div>
@@ -126,7 +126,7 @@ export default function Home() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-24 mt-12 grid place-items-center bg-gradient-to-r from-primary/5 via-chart-2/5 to-chart-3/5">
+      <section className="py-24 mt-12 grid place-items-center bg-linear-to-r from-primary/5 via-chart-2/5 to-chart-3/5">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-6">
             Ready to <Tranformtext />
@@ -137,13 +137,15 @@ export default function Home() {
             with AI-powered resumes.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Button
-              size="lg"
-              className="text-lg px-8 py-6 h-auto bg-primary hover:bg-primary/90 group"
-            >
-              Get Started Free
-              <ChevronRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
-            </Button>
+            <Link href={RouteURL.DASHBOARD}>
+              <Button
+                size="lg"
+                className="text-lg p-8 h-auto bg-primary hover:bg-primary/90 group"
+              >
+                Get Started Free
+                <ChevronRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
+              </Button>
+            </Link>
             <p className="text-sm text-muted-foreground">
               No credit card required • Free forever plan
             </p>
@@ -189,7 +191,7 @@ const FeatureCard = ({
       />
       <CardHeader>
         <div
-          className={`w-12 h-12 rounded-lg bg-gradient-to-r ${gradientFrom} ${gradientTo} flex items-center justify-center group-hover:scale-110 transition-transform`}
+          className={`w-12 h-12 rounded-lg bg-linear-to-r ${gradientFrom} ${gradientTo} flex items-center justify-center group-hover:scale-110 transition-transform`}
         >
           {icon}
         </div>
