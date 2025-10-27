@@ -2,16 +2,12 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import dynamic from "next/dynamic";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-const GlowingEffect = dynamic(() => import("@/components/ui/glowing-effect"), {
-  ssr: false,
-});
+const GlowingEffect = dynamic(() => import("@/components/ui/glowing-effect"));
 import HeroTitle from "@/components/ui/herotitle";
 const TextHoverEffect = dynamic(
-  () => import("@/components/ui/text-hover-effect"),
-  { ssr: false }
+  () => import("@/components/ui/text-hover-effect")
 );
 const Tranformtext = dynamic(() => import("@/components/ui/transform-text"), {
-  ssr: false,
   loading: () => <span className="inline-block w-24 h-6" />,
 });
 
