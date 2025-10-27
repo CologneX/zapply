@@ -1,10 +1,20 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import dynamic from "next/dynamic";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { GlowingEffect } from "@/components/ui/glowing-effect";
+const GlowingEffect = dynamic(() => import("@/components/ui/glowing-effect"), {
+  ssr: false,
+});
 import HeroTitle from "@/components/ui/herotitle";
-import { TextHoverEffect } from "@/components/ui/text-hover-effect";
-import Tranformtext from "@/components/ui/transform-text";
+const TextHoverEffect = dynamic(
+  () => import("@/components/ui/text-hover-effect"),
+  { ssr: false }
+);
+const Tranformtext = dynamic(() => import("@/components/ui/transform-text"), {
+  ssr: false,
+  loading: () => <span className="inline-block w-24 h-6" />,
+});
+
 import { RouteURL } from "@/lib/routes";
 import { cn } from "@/lib/utils";
 import {
