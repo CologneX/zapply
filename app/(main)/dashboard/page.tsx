@@ -14,6 +14,16 @@ import { ObjectId } from "mongodb";
 import { CoverLetterSchema } from "@/types/cover-letter.types";
 import { ResumeSchema } from "@/types/resume.types";
 import { ProfileSchema } from "@/types/profile.types";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Dashboard | Zapply",
+  description: "View and manage all your resumes and cover letters in one place.",
+  robots: {
+    index: false,
+    follow: false,
+  },
+};
 
 export default async function DashboardPage() {
   const session = await auth.api.getSession({

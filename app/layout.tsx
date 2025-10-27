@@ -19,7 +19,7 @@ const anonymousPro = Anonymous_Pro({
 
 export const metadata: Metadata = {
   title: "Zapply",
-  description: "CV and Cover Letter AI Builder",
+  description: "Resume and Cover Letter AI Builder",
 };
 
 export default function RootLayout({
@@ -29,6 +29,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <meta name="apple-mobile-web-app-title" content="zapply" />
+      </head>
       <body
         className={`
         ${albertSans.variable}

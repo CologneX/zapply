@@ -501,16 +501,60 @@ function ProjectsSection({ projects }: { projects: ProjectType[] }) {
 }
 
 export function ProfileDisplay({ profile }: ProfileDisplayProps) {
+  // Generate JSON-LD structured data for SEO
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    name: profile?.name,
+    headline: profile?.headline,
+    description: profile?.description?.replace(/<[^>]*>/g, ""), // Remove HTML tags
+    email: profile?.email,
+    telephone: profile?.mobile,
+    address: profile?.location,
+    url: typeof window !== "undefined" ? window.location.href : "",
+    jobTitle: profile?.headline,
+    sameAs: profile?.socials?.map((social) => social.url) || [],
+    knowsAbout: profile?.skills || [],
+    workExperience: profile?.workExperiences?.map((exp) => ({
+      "@type": "WorkPosition",
+      jobTitle: exp.name,
+      worksFor: {
+        "@type": "Organization",
+        name: exp.company,
+        areaServed: exp.location,
+      },
+      description: exp.description?.replace(/<[^>]*>/g, ""),
+      startDate: exp.startDate,
+      endDate: exp.endDate,
+    })) || [],
+    educationalBackground: profile?.educations?.map((edu) => ({
+      "@type": "EducationalOccupationalCredential",
+      name: `${edu.degree} in ${edu.name}`,
+      award: edu.degree,
+      educationalLevel: edu.name,
+      credentialCategory: edu.institution,
+      startDate: edu.startDate,
+      endDate: edu.endDate,
+    })) || [],
+  };
+
   return (
-    <div className="flex flex-col gap-8 px-4 mx-auto container py-8">
-      <HeaderSection profile={profile} />
-      <WorkExperienceSection experiences={profile?.workExperiences || []} />
-      <EducationSection educations={profile?.educations || []} />
-      <CertificationsSection certifications={profile?.certifications || []} />
-      <AwardsSection awards={profile?.awardOrHonors || []} />
-      <PublicationsSection publications={profile?.publications || []} />
-      <LanguagesSection languages={profile?.languages || []} />
-      <ProjectsSection projects={profile?.projects || []} />
-    </div>
+    <>
+      {/* JSON-LD Structured Data for SEO */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <div className="flex flex-col gap-8 px-4 mx-auto container py-8">
+        <HeaderSection profile={profile} />
+        <WorkExperienceSection experiences={profile?.workExperiences || []} />
+        <EducationSection educations={profile?.educations || []} />
+        <CertificationsSection certifications={profile?.certifications || []} />
+        <AwardsSection awards={profile?.awardOrHonors || []} />
+        <PublicationsSection publications={profile?.publications || []} />
+        <LanguagesSection languages={profile?.languages || []} />
+        <ProjectsSection projects={profile?.projects || []} />
+      </div>
+    </>
   );
 }

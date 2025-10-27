@@ -2,6 +2,16 @@ import { Button } from "@/components/ui/button";
 import DownloadCLButton from "./_components/download-button";
 import Link from "next/link";
 import { RouteURL } from "@/lib/routes";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Cover Letter Created | Zapply",
+  description: "Your cover letter has been successfully created. Download or share your personalized cover letter.",
+  robots: {
+    index: false,
+    follow: false,
+  },
+};
 
 export default async function CompletedCoverLetterPage({
   params,

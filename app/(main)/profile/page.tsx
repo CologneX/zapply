@@ -11,6 +11,16 @@ import { db } from "@/lib/db";
 import { ObjectId } from "mongodb";
 import { ErrorPageWrapper } from "@/components/common/errors";
 import ProfileForm from "./_components/form";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Profile Settings | Zapply",
+  description: "Manage your profile information and personal details on Zapply.",
+  robots: {
+    index: false,
+    follow: false,
+  },
+};
 
 export default async function ProfilePage() {
   const queryClient = new QueryClient(queryClientOptions);

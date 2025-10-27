@@ -2,6 +2,17 @@ import { Button } from "@/components/ui/button";
 import DownloadResumeButton from "./_components/download-button";
 import Link from "next/link";
 import { RouteURL } from "@/lib/routes";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Resume Created | Zapply",
+  description:
+    "Your resume has been successfully created. Download or share your personalized cover letter.",
+  robots: {
+    index: false,
+    follow: false,
+  },
+};
 
 export default async function CompletedResumePage({
   params,

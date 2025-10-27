@@ -1,4 +1,14 @@
 import CoverLetterForm from "./_components/form";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Create Cover Letter | Zapply",
+  description: "Create personalized cover letters tailored to specific job descriptions with AI assistance.",
+  robots: {
+    index: false,
+    follow: false,
+  },
+};
 
 export default function CoverLetterPage() {
   return (
