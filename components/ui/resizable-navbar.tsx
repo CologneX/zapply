@@ -1,7 +1,7 @@
 "use client";
 import { RouteURL } from "@/lib/routes";
 import { cn } from "@/lib/utils";
-import { BoxIcon, MenuIcon, XIcon } from "lucide-react";
+import { MenuIcon, XIcon } from "lucide-react";
 import {
   motion,
   AnimatePresence,
@@ -9,6 +9,7 @@ import {
   useMotionValueEvent,
 } from "motion/react";
 import Link from "next/link";
+import Image from "next/image";
 
 import React, { useRef, useState } from "react";
 
@@ -104,7 +105,7 @@ export const NavBody = ({ children, className, visible }: NavBodyProps) => {
         minWidth: "800px",
       }}
       className={cn(
-        "relative z-[60] mx-auto hidden w-full max-w-7xl flex-row items-center justify-between self-start rounded-full bg-transparent px-4 py-2 h-[var(--header-height)] lg:flex dark:bg-transparent",
+        "relative z-50 mx-auto hidden w-full max-w-7xl flex-row items-center justify-between self-start rounded-full bg-transparent px-4 py-2 h-[var(--header-height)] lg:flex dark:bg-transparent",
         visible && "bg-white/80 dark:bg-neutral-950/80",
         className
       )}
@@ -237,7 +238,12 @@ export const NavbarLogo = () => {
       href={RouteURL.HOME}
       className="relative z-20 mr-4 flex items-center space-x-2 px-2 py-1 text-sm font-normal text-black"
     >
-      <BoxIcon className="h-6 w-6" />
+      <Image
+        src="/web-app-manifest-512x512.png"
+        alt="zapply logo"
+        width={24}
+        height={24}
+      />
       <span className="font-medium">zapply</span>
     </Link>
   );
