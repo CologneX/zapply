@@ -17,7 +17,6 @@ export function DashboardContent() {
     useCoverLetterQuery();
   const { data: resumes, isLoading: resumesLoading } = useResumeQuery();
   const { data: profile } = useProfileQuery();
-  
   const [coverLetterSearch, setCoverLetterSearch] = useState("");
   const [resumeSearch, setResumeSearch] = useState("");
 

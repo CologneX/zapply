@@ -4,6 +4,7 @@ import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { geminiClient } from "@/lib/gen-ai";
 import { CreateCoverLetterSchema, CreateCoverLetterType } from "@/types/cover-letter.types";
+import { ProfileSchema } from "@/types/profile.types";
 import { ObjectId } from "mongodb";
 import { headers } from "next/headers";
 
@@ -26,13 +27,19 @@ export async function POST(request: Request) {
             return new Response("Invalid Input", { status: 400 });
         }
 
-        const profile = await db.collection("profiles").findOne({
+        const profileRaw = await db.collection("profiles").findOne({
             user_id: new ObjectId(session.user.id),
             deletedAt: null,
         });
 
-        if (!profile) {
+        if (!profileRaw) {
             return new Response("Profile not found. Please create a profile first.", { status: 404 });
+        }
+
+        const profile = ProfileSchema.safeParse(profileRaw);
+        if (!profile.success) {
+            console.error("Profile validation failed:", profile.error);
+            return new Response("Profile data is corrupted", { status: 500 });
         }
 
         // Generate cover letter content using AI with streaming

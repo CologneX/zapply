@@ -1,6 +1,7 @@
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { ResumeSchema } from "@/types/resume.types";
+import { ObjectId } from "mongodb";
 import { headers } from "next/headers";
 
 export async function GET() {
@@ -13,7 +14,7 @@ export async function GET() {
         }
 
         const rawresume = await db.collection("resumes").find({
-            user_id: session.user.id,
+            user_id: new ObjectId(session.user.id),
             deletedAt: null,
         }).toArray()
         if (!rawresume) {

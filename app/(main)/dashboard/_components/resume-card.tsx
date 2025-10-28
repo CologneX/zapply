@@ -13,12 +13,10 @@ interface ResumeCardProps {
 }
 
 export function ResumeCard({ resume }: ResumeCardProps) {
-  const { DeleteResume } = useResumeQuery();
+  const { DeleteResume, DownloadServerPDF } = useResumeQuery();
   const matchScore = resume.matchScore ?? 0;
   const keywordsMatched = resume.keywordsMatched?.length ?? 0;
   const keywordsMissing = resume.keywordsMissing?.length ?? 0;
-
-  const { DownloadServerPDF } = useResumeQuery();
 
   // Determine color based on match score
   const getMatchScoreColor = (score: number) => {

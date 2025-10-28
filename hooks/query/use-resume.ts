@@ -1,7 +1,7 @@
 "use client";
 
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { ClientCreateResumeType, GeneratedResumeSuggestionReturnSchema, GeneratedResumeSuggestionReturnType, GenerateResumeRequestType, ResumeSchema } from "@/types/resume.types";
+import { ClientCreateResumeType, GeneratedResumeSuggestionReturnSchema, GeneratedResumeSuggestionReturnType, GenerateResumeRequestType, ResumeSchema, ResumeType } from "@/types/resume.types";
 import { resumeKeys } from "@/types/query-keys/resume.keys";
 import { RouteURL } from "@/lib/routes";
 import { useRouter } from "next/navigation";
@@ -19,8 +19,13 @@ export const useResumeQuery = () => {
             if (!req.ok) {
                 throw new Error('Failed to fetch resumes')
             }
-            const resumes = ResumeSchema.array().safeParse(await req.json())
-            return resumes.data
+            const data = await req.json()
+            // const resumes = ResumeSchema.array().safeParse(data)
+            // if (!resumes.success) {
+            //     console.error('Resume data validation error:', resumes.error)
+            //     throw new Error('Invalid resume data format')
+            // }
+            return data as ResumeType[]
         }
     })
 
