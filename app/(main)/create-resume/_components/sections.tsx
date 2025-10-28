@@ -2405,7 +2405,7 @@ export default function ResumeProfileSections({
                 Apply All
               </Button>
             </div>
-            <Button>Save to Library</Button>
+            <Button>Save</Button>
           </CardFooter>
         </Card>
         <Card className="p-4 space-y-6 flex-2">
