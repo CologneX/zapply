@@ -99,7 +99,7 @@ export async function POST(request: Request) {
         const aiOutput = GeneratedResumeSuggestionReturnSchema.safeParse(
             finalizedOutput
         );
-
+        
         if (!aiOutput.success) {
             console.error("AI output validation failed:", aiOutput.error);
             return new Response("AI generated invalid response", { status: 500 });

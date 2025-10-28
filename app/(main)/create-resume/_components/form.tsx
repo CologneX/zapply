@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { useResumeQuery } from "@/hooks/query/use-resume";
 import { FormField } from "@/components/ui/form";
 import dynamic from "next/dynamic";
+import { FullScreenProgress } from "@/components/common/full-screen-progress";
 
 const RichTextEditor = dynamic(
   () => import("@/components/ui/rich-text-editor"),
@@ -90,6 +91,7 @@ export default function ResumeTailorPage() {
 
   return (
     <>
+      <FullScreenProgress isVisible={GenerateResume.isPending} />
       <AppForm
         form={generateForm}
         onSubmit={generateForm.handleSubmit(handleGenerate)}

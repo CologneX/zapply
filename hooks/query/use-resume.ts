@@ -11,7 +11,7 @@ import { CreateResumeAction, DeleteResumeAction } from "@/services/resume.servic
 
 export const useResumeQuery = () => {
     const router = useRouter()
-    
+
     const query = useQuery({
         queryKey: resumeKeys.all,
         queryFn: async () => {
@@ -23,7 +23,7 @@ export const useResumeQuery = () => {
             return resumes.data
         }
     })
-    
+
     const CreateResume = useMutation({
         mutationFn: async (data: ClientCreateResumeType) => {
             const result = await CreateResumeAction(data)
@@ -73,16 +73,6 @@ export const useResumeQuery = () => {
                 throw new Error(resJson.error || "Failed to generate resume suggestions");
             }
 
-            // const transformed = transformProfileDates(resJson.profile);
-
-            // const generated = {
-            //     ...resJson,
-            //     profile: transformed,
-            // }
-            // // if (!generated.success) {
-            // //     console.error("Resume generation response validation error:", generated.error);
-            // //     throw new Error("Invalid response format from server");
-            // // }
             const dataProfile = transformProfileDates(resJson.profile);
             const returnData = GeneratedResumeSuggestionReturnSchema.safeParse({
                 ...resJson,

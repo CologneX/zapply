@@ -40,8 +40,8 @@ export const CreateWorkExperienceSchema = z.object({
     location: z.string().optional(),
     type: z.enum(["Full-time", "Part-time", "Freelance", "Internship", "Volunteer", "Contract", "Other"]).optional(),
     description: z.string().optional(),
-    startDate: DateToStringSchema,
-    endDate: DateToStringSchema.optional(),
+    startDate: z.date(),
+    endDate: z.date().optional(),
     isCurrent: z.boolean().optional(),
 });
 
@@ -74,8 +74,8 @@ export const CreateEducationSchema = z.object({
     institution: z.string().min(2, "Institution name please — at least 2 characters."),
     location: z.string().optional(),
     degree: z.string().min(2, "Degree title too tiny — use 2+ characters."),
-    startDate: DateToStringSchema,
-    endDate: DateToStringSchema.optional(),
+    startDate: z.date(),
+    endDate: z.date().optional(),
     isCurrent: z.boolean().optional(),
 });
 
@@ -105,8 +105,8 @@ export const CreateCertificationSchema = z.object({
     _id: z.custom<ObjectId>().default(() => new ObjectId()).optional(),
     name: z.string().min(2, "Certification name too short — give it 2+ characters."),
     issuer: z.string().min(2, "Issuer name needed (2+ chars)."),
-    startDate: DateToStringSchema,
-    endDate: DateToStringSchema.optional(),
+    startDate: z.date(),
+    endDate: z.date().optional(),
     credentialId: z.string().optional(),
     url: z.string().optional(),
 });
@@ -135,7 +135,7 @@ export const CreateAwardOrHonorSchema = z.object({
     name: z.string().min(2, "What's the award called? (2+ chars) — humble brag incoming."),
     institution: z.string().min(2, "Issuer name please (2+ chars)."),
     description: z.string().optional(),
-    date: DateToStringSchema,
+    date: z.date(),
     url: z.string().optional(),
 });
 
@@ -161,7 +161,7 @@ export const CreatePublicationSchema = z.object({
     _id: z.custom<ObjectId>().default(() => new ObjectId()).optional(),
     title: z.string().min(2, "Give it a proper title (2+ chars) — don't be shy."),
     // authors: z.array(z.string().min(2)),
-    date: DateToStringSchema,
+    date: z.date(),
     url: z.string().optional(),
 });
 

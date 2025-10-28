@@ -6,7 +6,6 @@ import StarterKit from "@tiptap/starter-kit";
 import {
   Bold,
   Italic,
-  Strikethrough,
   Code,
   Heading1,
   Heading2,
