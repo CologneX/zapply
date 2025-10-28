@@ -43,15 +43,18 @@ import { Switch } from "@/components/ui/switch";
 import { ClientCreateEducationType } from "@/types/profile.types";
 import { closeDialog, openDialog } from "@/components/common/dialog";
 import { motion, AnimatePresence } from "motion/react";
-import dynamic from 'next/dynamic';
+import dynamic from "next/dynamic";
 
-const RichTextEditor = dynamic(() => import('@/components/ui/rich-text-editor'), {
-  ssr: false,
-  loading: () => <div className="min-h-20" />,
-});
+const RichTextEditor = dynamic(
+  () => import("@/components/ui/rich-text-editor"),
+  {
+    ssr: false,
+    loading: () => <div className="min-h-20" />,
+  }
+);
 
 const MonthPicker = dynamic(
-  () => import('@/components/ui/month-picker').then((mod) => mod.MonthPicker),
+  () => import("@/components/ui/month-picker").then((mod) => mod.MonthPicker),
   { ssr: false }
 );
 import { ClientCreateResumeType } from "@/types/resume.types";
@@ -82,7 +85,8 @@ function InfoSection({
       <section className="flex flex-col md:flex-row gap-2 overflow-y-hidden">
         <div className="flex-1 flex-col">
           <div className="flex flex-col items-center">
-              <ProgressRadial
+            <ProgressRadial
+              value={form.getValues("matchScore") || 0}
               startAngle={-180}
               endAngle={0}
               strokeWidth={10}
