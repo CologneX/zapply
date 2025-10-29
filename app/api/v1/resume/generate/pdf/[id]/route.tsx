@@ -1,5 +1,5 @@
 "use server";
-import { ResumePDf1 } from "@/components/pdf/resume.1";
+import ResumePDF2 from "@/components/pdf/resume.2";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { ProfileSchema } from "@/types/profile.types";
@@ -54,7 +54,7 @@ export async function GET(
     }
 
     const document = await pdf(
-      <ResumePDf1
+      <ResumePDF2
         resume={resume.data.profile}
         jobTitle={resume.data.jobTitle}
         companyName={resume.data.companyName}

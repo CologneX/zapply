@@ -1,8 +1,8 @@
 import { Document, Page, Text, View } from "@react-pdf/renderer";
 import { createTw } from "react-pdf-tailwind";
 import { ClientCreateProfileType } from "@/types/profile.types";
-import { format } from "date-fns";
 import { parseHtmlToText, parseHtmlToLines } from "@/lib/html-to-pdf";
+import { formatMonth } from "@/lib/utils";
 
 const tw = createTw({
   fontFamily: {
@@ -39,7 +39,7 @@ export function ResumePDf1({
   const formatDate = (date: Date | string | undefined, isCurrent?: boolean) => {
     if (!date) return "";
     const d = new Date(date);
-    return isCurrent ? "Present" : format(d, "MMM yyyy");
+    return isCurrent ? "Present" : formatMonth(d);
   };
 
   const formatDateRange = (
