@@ -46,14 +46,17 @@ export async function POST(request: Request) {
         const response = await geminiClient.models.generateContentStream({
             model: "gemini-2.5-flash-lite",
             contents: JSON.stringify({
-                profile,
+                profile: profile.data,
                 jobTitle: validatedFields.data.jobTitle,
                 companyName: validatedFields.data.companyName,
                 jobDescription: validatedFields.data.jobDescription,
                 additionalInfo: validatedFields.data.additionalInfo,
             }),
             config: {
-                systemInstruction: `Generate a professional cover letter based on the provided profile and job details. 
+                systemInstruction: `
+                Generate a professional cover letter based on the provided profile, job title, description, company name, and take into account the additional info.
+                
+                Briefly research the company to understand its values and culture, and tailor the cover letter accordingly.
                 
                 Output ONLY valid HTML with these formatting elements:
                 - <p> for paragraphs
@@ -68,6 +71,9 @@ export async function POST(request: Request) {
                 - head, body, html, div, span, or any other tags
                 - Inline styles or class attributes
                 - HTML comments
+
+                Do NOT include any explanations or additional text outside of the HTML structure.
+                Only provide the BODY of the cover letter, without any greetings, only ending with a signature line.
 
                 Start directly with the content (e.g., <p>...</p>) without any wrapper elements.`,
                 thinkingConfig: {

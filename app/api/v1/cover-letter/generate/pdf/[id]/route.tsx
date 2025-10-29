@@ -1,5 +1,6 @@
 "use server";
 import { CoverLetterPDF1 } from "@/components/pdf/cover-letter.1";
+import { CoverLetterPDF2 } from "@/components/pdf/cover-letter.2";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { CoverLetterSchema } from "@/types/cover-letter.types";
@@ -55,7 +56,7 @@ export async function GET(
 
     // Render PDF logic
     const document = await pdf(
-      <CoverLetterPDF1
+      <CoverLetterPDF2
         userEmail={profile.data.email}
         userName={profile.data.name}
         userLocation={profile.data.location}
