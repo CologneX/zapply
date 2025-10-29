@@ -1491,7 +1491,7 @@ function LanguagesSection({
                         <Badge variant="secondary" className="text-xs">
                           {form.watch(`profile.languages.${index}.proficiency`)}
                           {form.watch(`profile.languages.${index}.level`) &&
-                            `profile. · ${form.watch(
+                            ` · ${form.watch(
                               `profile.languages.${index}.level`
                             )}`}
                         </Badge>

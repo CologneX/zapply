@@ -188,10 +188,6 @@ export default function ResumeTailorPage() {
             <motion.section
               id="general-info"
               className="space-y-4"
-              initial={{ x: -400 }}
-              animate={{ x: 0 }}
-              exit={{ x: -400 }}
-              transition={{ duration: 0.3, ease: "easeInOut" }}
             >
               <FormField
                 control={generateForm.control}
@@ -344,10 +340,6 @@ export default function ResumeTailorPage() {
           <motion.section
             id="profile-sections"
             className="space-y-6"
-            initial={{ x: 400 }}
-            animate={{ x: 0 }}
-            exit={{ x: 400 }}
-            transition={{ duration: 0.3, ease: "easeInOut" }}
           >
             <ResumeProfileSections form={createResumeForm} />
           </motion.section>
