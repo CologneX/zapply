@@ -46,7 +46,7 @@ export function ResumeCard({ resume }: ResumeCardProps) {
   };
 
   return (
-    <div className="relative rounded-lg border border-border bg-muted/20 p-3 transition-all hover:bg-muted/40 hover:border-border/80 min-w-72">
+    <div className="relative rounded-lg border border-border bg-muted/20 p-3 transition-all hover:bg-muted/40 hover:border-border/80 w-96">
       {/* Content */}
       <div className="flex flex-col gap-2">
         {/* Header */}
