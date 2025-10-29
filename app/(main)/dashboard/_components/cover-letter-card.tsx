@@ -35,7 +35,7 @@ export function CoverLetterCard({ coverLetter }: CoverLetterCardProps) {
   return (
     <div className="relative rounded-lg border border-border bg-muted/20 p-3 transition-all hover:bg-muted/40 hover:border-border/80 w-96">
       {/* Content */}
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-col gap-2 h-full">
         {/* Header */}
         <div className="flex items-start justify-between gap-2">
           <div className="flex-1 min-w-0">
@@ -47,7 +47,7 @@ export function CoverLetterCard({ coverLetter }: CoverLetterCardProps) {
         </div>
 
         {/* Footer */}
-        <div className="flex items-center justify-between gap-2 pt-2">
+        <div className="flex items-center justify-between gap-2 mt-auto">
           <span className="text-xs text-muted-foreground">
             {formatDistanceToNow(new Date(coverLetter.createdAt), {
               addSuffix: true,
