@@ -326,9 +326,9 @@ export function ResumePDf1({
                   </Text>
                 </View>
 
-                {proj.technologies && proj.technologies.length > 0 && (
+                {proj.skills && proj.skills.length > 0 && (
                   <Text style={tw("text-xs text-slate-600 mb-xs")}>
-                    Technologies: {proj.technologies.join(", ")}
+                    Skills: {proj.skills.join(", ")}
                   </Text>
                 )}
 
@@ -352,12 +352,6 @@ export function ResumePDf1({
                         )
                     )}
                   </View>
-                )}
-
-                {proj.role && proj.role.length > 0 && (
-                  <Text style={tw("text-xs leading-relaxed text-slate-700")}>
-                    Role: {proj.role.join(", ")}
-                  </Text>
                 )}
               </View>
             ))}

@@ -1614,8 +1614,7 @@ function ProjectsSection({
     name: "",
     description: "",
     shortDescription: "",
-    technologies: [],
-    role: [],
+    skills: [],
     repositoryUrl: "",
     liveUrl: "",
     startedAt: new Date(),
@@ -1683,33 +1682,18 @@ function ProjectsSection({
                         }}
                       />
                     )}
-                    {form.watch(`profile.projects.${index}.technologies`)
+                    {form.watch(`profile.projects.${index}.skills`)
                       ?.length ? (
                       <div className="flex flex-wrap gap-1">
                         {form
-                          .watch(`profile.projects.${index}.technologies`)
-                          ?.map((tech) => (
+                          .watch(`profile.projects.${index}.skills`)
+                          ?.map((skill) => (
                             <Badge
-                              key={tech}
+                              key={skill}
                               variant="secondary"
                               className="text-xs"
                             >
-                              {tech}
-                            </Badge>
-                          ))}
-                      </div>
-                    ) : null}
-                    {form.watch(`profile.projects.${index}.role`)?.length ? (
-                      <div className="flex flex-wrap gap-1">
-                        {form
-                          .watch(`profile.projects.${index}.role`)
-                          ?.map((r) => (
-                            <Badge
-                              key={r}
-                              variant="outline"
-                              className="text-xs"
-                            >
-                              {r}
+                              {skill}
                             </Badge>
                           ))}
                       </div>
@@ -1795,39 +1779,19 @@ function ProjectsSection({
                         )}
                       />
                       <FormField
-                        name={`profile.projects.${index}.technologies`}
+                        name={`profile.projects.${index}.skills`}
                         control={form.control}
                         render={({ field: { value, onChange, ...field } }) => (
-                          <AppFormField label="Technologies">
+                          <AppFormField label="Skills">
                             <Input
-                              placeholder="React, TypeScript, Node.js (comma-separated)"
+                              placeholder="React, TypeScript, Node.js, Frontend, Backend (comma-separated)"
                               defaultValue={value?.join(", ") || ""}
                               onChange={(e) => {
-                                const techs = e.target.value
+                                const skills = e.target.value
                                   .split(",")
-                                  .map((t) => t.trim())
-                                  .filter((t) => t.length > 0);
-                                onChange(techs);
-                              }}
-                              {...field}
-                            />
-                          </AppFormField>
-                        )}
-                      />
-                      <FormField
-                        name={`profile.projects.${index}.role`}
-                        control={form.control}
-                        render={({ field: { value, onChange, ...field } }) => (
-                          <AppFormField label="Roles">
-                            <Input
-                              placeholder="Frontend, Backend (comma-separated)"
-                              defaultValue={value?.join(", ") || ""}
-                              onChange={(e) => {
-                                const roles = e.target.value
-                                  .split(",")
-                                  .map((r) => r.trim())
-                                  .filter((r) => r.length > 0);
-                                onChange(roles);
+                                  .map((s) => s.trim())
+                                  .filter((s) => s.length > 0);
+                                onChange(skills);
                               }}
                               {...field}
                             />
@@ -2149,8 +2113,6 @@ export default function ResumeProfileSections({
   ): string | string[] => {
     // Array fields that should always be arrays
     const arrayFields = [
-      "technologies",
-      "role",
       "skills",
       "proficiencies",
       "languages",

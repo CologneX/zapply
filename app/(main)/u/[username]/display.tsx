@@ -446,20 +446,11 @@ function ProjectsSection({ projects }: { projects: ProjectType[] }) {
                 }}
               />
             )}
-            {project.technologies?.length ? (
+            {project.skills?.length ? (
               <div className="flex flex-wrap gap-1">
-                {project.technologies?.map((tech) => (
-                  <Badge key={tech} variant="secondary" className="text-xs">
-                    {tech}
-                  </Badge>
-                ))}
-              </div>
-            ) : null}
-            {project.role?.length ? (
-              <div className="flex flex-wrap gap-1">
-                {project.role?.map((r) => (
-                  <Badge key={r} variant="outline" className="text-xs">
-                    {r}
+                {project.skills?.map((skill) => (
+                  <Badge key={skill} variant="secondary" className="text-xs">
+                    {skill}
                   </Badge>
                 ))}
               </div>
